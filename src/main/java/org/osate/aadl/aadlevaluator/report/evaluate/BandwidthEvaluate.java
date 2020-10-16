@@ -261,10 +261,10 @@ public class BandwidthEvaluate
             bandwith => 140 000 Kbps;
         */
         
-        List<Property> avaliables = component.getProperty( PROPERTY_DEVICE_BANDWIDTH_AVALIABLE );
-        List<Property> periods = component.getProperty( PROPERTY_PERIOD );
-        List<Property> velocities = busSubcomponent.getComponent().getProperty( PROPERTY_BUS_BANDWIDTH );
-        List<Property> sizes   = feature.getComponent().getProperty( PROPERTY_DATA_SIZE );
+        //List<Property> velocities = busSubcomponent.getComponent().getProperty( PROPERTY_BUS_BANDWIDTH );
+        //List<Property> avaliables = component.getProperty( PROPERTY_DEVICE_BANDWIDTH_AVALIABLE );
+        List<Property> periods    = component.getProperty( PROPERTY_PERIOD );
+        List<Property> sizes      = feature.getComponent().getProperty( PROPERTY_DATA_SIZE );
         
         Set<String> erros = new LinkedHashSet<>();
         
@@ -279,22 +279,12 @@ public class BandwidthEvaluate
             erros.add( e );
         }
         
+        /*
         if( velocities.isEmpty() )
         {
             String e = MessageFormat.format( 
                 "The property {0} was not found in the bus." , 
                 PROPERTY_BUS_BANDWIDTH 
-            );
-            
-            System.out.println( "[BANDWIDTH]              ERROR: " + e );
-            erros.add( e );
-        }
-        
-        if( sizes.isEmpty() )
-        {
-            String e = MessageFormat.format( 
-                "The property {0} was not found in the data." , 
-                PROPERTY_DATA_SIZE 
             );
             
             System.out.println( "[BANDWIDTH]              ERROR: " + e );
@@ -311,23 +301,35 @@ public class BandwidthEvaluate
             System.out.println( "[BANDWIDTH]              ERROR: " + e );
             erros.add( e );
         }
+        */
+        
+        if( sizes.isEmpty() )
+        {
+            String e = MessageFormat.format( 
+                "The property {0} was not found in the data." , 
+                PROPERTY_DATA_SIZE 
+            );
+            
+            System.out.println( "[BANDWIDTH]              ERROR: " + e );
+            erros.add( e );
+        }
         
         // get the last property defined
+        //Property velocity = velocities.isEmpty() ? null : velocities.get( velocities.size() - 1 );
         Property period   = periods.isEmpty() ? null : periods.get( periods.size() - 1 );
-        Property velocity = velocities.isEmpty() ? null : velocities.get( velocities.size() - 1 );
         Property size     = sizes.isEmpty() ? null : sizes.get( sizes.size() - 1 );
         
+        //System.out.println( "[BANDWIDTH]              velocity.: " + velocity );
         System.out.println( "[BANDWIDTH]              period...: " + period   );
-        System.out.println( "[BANDWIDTH]              velocity.: " + velocity );
         System.out.println( "[BANDWIDTH]              size.....: " + size     );
-        System.out.println( "[BANDWIDTH]              min......: " + min( period , velocity , size ) );
-        System.out.println( "[BANDWIDTH]              max......: " + max( period , velocity , size ) );
+        System.out.println( "[BANDWIDTH]              min......: " + min( period , size ) );
+        System.out.println( "[BANDWIDTH]              max......: " + max( period , size ) );
         
         return new IndividualResult( 
             connection.getName() , 
             component , 
-            min( period , velocity , size ) ,
-            max( period , velocity , size ) ,
+            min( period , size ) ,
+            max( period , size ) ,
             erros
         );
     }
@@ -336,30 +338,28 @@ public class BandwidthEvaluate
     // --------------------------------------- //
     // --------------------------------------- //
     
-    public Map<String,String> min( Property period , Property velocity , Property size )
+    public Map<String,String> min( Property period , Property size )
     {
-        if( period == null || velocity == null || size == null )
+        if( period == null || size == null )
         {
             return null;
         }
         
         return evaluate( 
-            getValueStr( period   , Property.MIN ) , 
-            getValueStr( velocity , Property.MIN ) , 
+            getValueStr( period   , Property.MIN ) ,
             getValueStr( size     , Property.MIN ) 
         );
     }
     
-    public Map<String,String> max( Property period , Property velocity , Property size )
+    public Map<String,String> max( Property period , Property size )
     {
-        if( period == null || velocity == null || size == null )
+        if( period == null || size == null )
         {
             return null;
         }
         
         return evaluate( 
-            getValueStr( period   , Property.MAX ) , 
-            getValueStr( velocity , Property.MAX ) , 
+            getValueStr( period   , Property.MAX ) ,
             getValueStr( size     , Property.MAX ) 
         );
     }
@@ -369,24 +369,29 @@ public class BandwidthEvaluate
      * 
      * 
      * @param period        periodo da transmissão
-     * @param velocity      velocidade de transmissão do barramento
      * @param size          tamanho do dado
      * @return              largura de banda consumida (Kbps)
      */
-    public Map<String,String> evaluate( String period , String velocity , String size )
+    public Map<String,String> evaluate( String period , String size )
     {
         // convert period and time to seconds
         // convert size to Kb (Kilobits)
         
+        double result = SizeUtils.getValue( size , "Kb" ) 
+            * (1.0 / TimeUtils.getValue( period , "s" ));
+        
+        /*
         double result = TimeUtils.getValue( period , "s" )
             * SizeUtils.getValue( velocity , "Kbps" )
             * SizeUtils.getValue( size , "Kb" );
+        */
         
         Map<String,String> r = new LinkedHashMap<>();
-        r.put( "period"   , TimeUtils.convert( period , "s"      ) );
-        r.put( "velocity" , SizeUtils.convert( velocity , "Kbps" ) );
-        r.put( "size"     , SizeUtils.convert( size , "Kb"       ) );
+        r.put( "period"   , TimeUtils.convert( period , "s" ) );
+        r.put( "size"     , SizeUtils.convert( size , "Kb" ) );
         r.put( "result"   , result + " Kbps" );
+        
+        //r.put( "velocity" , SizeUtils.convert( velocity , "Kbps" ) );
         
         return r;
     }
