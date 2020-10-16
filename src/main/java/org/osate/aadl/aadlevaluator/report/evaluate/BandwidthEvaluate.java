@@ -3,6 +3,7 @@ package org.osate.aadl.aadlevaluator.report.evaluate;
 import org.osate.aadl.evaluator.unit.UnitUtils;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -261,7 +262,7 @@ public class BandwidthEvaluate
             bandwith => 140 000 Kbps;
         */
         
-        //List<Property> velocities = busSubcomponent.getComponent().getProperty( PROPERTY_BUS_BANDWIDTH );
+        List<Property> velocities = busSubcomponent.getComponent().getProperty( PROPERTY_BUS_BANDWIDTH );
         //List<Property> avaliables = component.getProperty( PROPERTY_DEVICE_BANDWIDTH_AVALIABLE );
         List<Property> periods    = component.getProperty( PROPERTY_PERIOD );
         List<Property> sizes      = feature.getComponent().getProperty( PROPERTY_DATA_SIZE );
@@ -279,7 +280,6 @@ public class BandwidthEvaluate
             erros.add( e );
         }
         
-        /*
         if( velocities.isEmpty() )
         {
             String e = MessageFormat.format( 
@@ -291,7 +291,8 @@ public class BandwidthEvaluate
             erros.add( e );
         }
         
-        if( avaliables.isEmpty() )
+        /*
+        i/f( avaliables.isEmpty() )
         {
             String e = MessageFormat.format( 
                 "The property {0} was not found in the device." , 
@@ -315,21 +316,21 @@ public class BandwidthEvaluate
         }
         
         // get the last property defined
-        //Property velocity = velocities.isEmpty() ? null : velocities.get( velocities.size() - 1 );
+        Property velocity = velocities.isEmpty() ? null : velocities.get( velocities.size() - 1 );
         Property period   = periods.isEmpty() ? null : periods.get( periods.size() - 1 );
         Property size     = sizes.isEmpty() ? null : sizes.get( sizes.size() - 1 );
         
-        //System.out.println( "[BANDWIDTH]              velocity.: " + velocity );
+        System.out.println( "[BANDWIDTH]              velocity.: " + velocity );
         System.out.println( "[BANDWIDTH]              period...: " + period   );
         System.out.println( "[BANDWIDTH]              size.....: " + size     );
-        System.out.println( "[BANDWIDTH]              min......: " + min( period , size ) );
-        System.out.println( "[BANDWIDTH]              max......: " + max( period , size ) );
+        System.out.println( "[BANDWIDTH]              min......: " + min( period , size , velocity ) );
+        System.out.println( "[BANDWIDTH]              max......: " + max( period , size , velocity ) );
         
         return new IndividualResult( 
             connection.getName() , 
             component , 
-            min( period , size ) ,
-            max( period , size ) ,
+            min( period , size , velocity ) ,
+            max( period , size , velocity ) ,
             erros
         );
     }
@@ -338,7 +339,7 @@ public class BandwidthEvaluate
     // --------------------------------------- //
     // --------------------------------------- //
     
-    public Map<String,String> min( Property period , Property size )
+    public Map<String,String> min( Property period , Property size , Property bandwidth )
     {
         if( period == null || size == null )
         {
@@ -346,12 +347,13 @@ public class BandwidthEvaluate
         }
         
         return evaluate( 
-            getValueStr( period   , Property.MIN ) ,
-            getValueStr( size     , Property.MIN ) 
+            getValueStr( period    , Property.MIN ) ,
+            getValueStr( size      , Property.MIN ) ,
+            getValueStr( bandwidth , Property.MIN ) 
         );
     }
     
-    public Map<String,String> max( Property period , Property size )
+    public Map<String,String> max( Property period , Property size , Property bandwidth )
     {
         if( period == null || size == null )
         {
@@ -359,8 +361,9 @@ public class BandwidthEvaluate
         }
         
         return evaluate( 
-            getValueStr( period   , Property.MAX ) ,
-            getValueStr( size     , Property.MAX ) 
+            getValueStr( period    , Property.MAX ) ,
+            getValueStr( size      , Property.MAX ) ,
+            getValueStr( bandwidth , Property.MAX )
         );
     }
     
@@ -370,15 +373,20 @@ public class BandwidthEvaluate
      * 
      * @param period        periodo da transmissão
      * @param size          tamanho do dado
+     * @param bandwidth     velocidade da banda disponivel
      * @return              largura de banda consumida (Kbps)
      */
-    public Map<String,String> evaluate( String period , String size )
+    public Map<String,String> evaluate( String period , String size , String bandwidth )
     {
         // convert period and time to seconds
         // convert size to Kb (Kilobits)
         
         double result = SizeUtils.getValue( size , "Kb" ) 
             * (1.0 / TimeUtils.getValue( period , "s" ));
+        
+        double latency = UnitUtils.isEmpty( bandwidth ) || UnitUtils.getValue( bandwidth ) == 0
+            ? 0
+            : result / UnitUtils.getValue( bandwidth );
         
         /*
         double result = TimeUtils.getValue( period , "s" )
@@ -389,6 +397,7 @@ public class BandwidthEvaluate
         Map<String,String> r = new LinkedHashMap<>();
         r.put( "period"   , TimeUtils.convert( period , "s" ) );
         r.put( "size"     , SizeUtils.convert( size , "Kb" ) );
+        r.put( "latency"  , latency + " s" );
         r.put( "result"   , result + " Kbps" );
         
         //r.put( "velocity" , SizeUtils.convert( velocity , "Kbps" ) );
@@ -508,6 +517,8 @@ public class BandwidthEvaluate
                 max += UnitUtils.getValue( r.getMax() );
             }
             
+            // ------------------------ //
+            
             return new IndividualResult( 
                 "total" , 
                 system , 
@@ -521,10 +532,10 @@ public class BandwidthEvaluate
     {
         private final String connection;
         private final T device;
-        private final Map<String,String> minParameter;
         private final String min;
-        private final Map<String,String> maxParameter;
         private final String max;
+        private final Map<String,String> minParameter;
+        private final Map<String,String> maxParameter;
         private final Set<String> errors;
         private final Set<String> bandwidthAvaliables;
 

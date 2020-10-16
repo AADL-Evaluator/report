@@ -8,6 +8,7 @@ import org.osate.aadl.aadlevaluator.report.evaluate.PriceEvaluate;
 import org.osate.aadl.aadlevaluator.report.evaluate.WeightEvaluate;
 import org.osate.aadl.evaluator.project.Component;
 import org.osate.aadl.evaluator.project.Subcomponent;
+import org.osate.aadl.evaluator.unit.UnitUtils;
 
 public class Peformance 
 {
@@ -84,6 +85,9 @@ public class Peformance
                 
                 ReportGroup subGroup = new ReportGroup( sub.getConnection() );
                 
+                if( sub.getMinParameter() != null ) subGroup.addValue( "latency_min" , sub.getMinParameter().get( "latency" ) , false , false );
+                if( sub.getMaxParameter() != null ) subGroup.addValue( "latency_max" , sub.getMaxParameter().get( "latency" ) , false , false );
+                
                 subGroup.addValue( "usage_min" , sub.getMin() , false , false );
                 subGroup.addValue( "usage_max" , sub.getMax() , false , false );
                 subGroup.addValue( "device" , name            , false , false );
@@ -92,9 +96,30 @@ public class Peformance
                 busGroup.addSubgroup( subGroup );
             }
             
+            
+            
             busGroup.addValue( "connections_number" , result.getResults().size() , false , false );
             busGroup.addValue( "total_usage_min" , total.getMin() , true , true );
             busGroup.addValue( "total_usage_max" , total.getMax() , true , true );
+            
+            if( !UnitUtils.isEmpty( result.getBandwidth() ) )
+            {
+                double bandwidth = UnitUtils.getValue( result.getBandwidth() );
+                
+                busGroup.addValue( 
+                    "total_latency_min" , 
+                    UnitUtils.getValue( total.getMin() ) / bandwidth + " s" , 
+                    true , 
+                    true 
+                );
+                
+                busGroup.addValue( 
+                    "total_latency_max" , 
+                    UnitUtils.getValue( total.getMax() ) / bandwidth + " s" , 
+                    true , 
+                    true 
+                );
+            }
             
             group.addSubgroup( busGroup );
         }
