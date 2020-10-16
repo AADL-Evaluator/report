@@ -51,17 +51,24 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
         table.addColumn( new FieldTableColumn( "subcharacteristic" , "subcharacteristic" ) );
         table.addColumn( new FieldTableColumn( "name" , "name" ) );
         
-        table.addColumn( new CustomTableColumn<ReportFactor,String>( "min" , 50 ){
+        table.addColumn( new CustomTableColumn<ReportFactor,String>( "range min" , 50 ){
             @Override
             public String getValue( ReportFactor factor ) {
                 return factor.getMinUnit();
             }
         });
         
-        table.addColumn( new CustomTableColumn<ReportFactor,String>( "max" , 50 ){
+        table.addColumn( new CustomTableColumn<ReportFactor,String>( "range max" , 50 ){
             @Override
             public String getValue( ReportFactor factor ) {
                 return factor.getMaxUnit();
+            }
+        });
+        
+        table.addColumn( new CustomTableColumn<ReportFactor,String>( "reference" , 50 ){
+            @Override
+            public String getValue( ReportFactor factor ) {
+                return factor.getReference();
             }
         });
         

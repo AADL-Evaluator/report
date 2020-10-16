@@ -95,6 +95,11 @@ public class ResumeUtils
                 
                 ReportFactor factor = (ReportFactor) resume.get( entry.getKey() ).getValue();
                 
+                factor.setReference( entry.getValue().getReference() == null 
+                    ? "" 
+                    :  entry.getValue().getReference().toString()
+                );
+                
                 if( factor.getMin().compareTo( value ) == 1 )
                 {
                     factor.setMin( value );

@@ -12,6 +12,7 @@ public class ReportFactor implements Cloneable
     private BigDecimal min;
     private BigDecimal max;
     private String unit;
+    private String reference;
     private BigDecimal userFactor;
     private boolean lessIsBetter;
     
@@ -105,6 +106,17 @@ public class ReportFactor implements Cloneable
     public ReportFactor setLessIsBetter( boolean lessIsBetter )
     {
         this.lessIsBetter = lessIsBetter;
+        return this;
+    }
+
+    public String getReference()
+    {
+        return reference == null ? "" : reference;
+    }
+
+    public ReportFactor setReference( String reference )
+    {
+        this.reference = reference;
         return this;
     }
     

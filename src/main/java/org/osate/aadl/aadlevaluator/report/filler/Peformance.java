@@ -96,11 +96,9 @@ public class Peformance
                 busGroup.addSubgroup( subGroup );
             }
             
-            
-            
             busGroup.addValue( "connections_number" , result.getResults().size() , false , false );
-            busGroup.addValue( "total_usage_min" , total.getMin() , true , true );
-            busGroup.addValue( "total_usage_max" , total.getMax() , true , true );
+            busGroup.addValue( "total_usage_min"    , total.getMin() , true , true , result.getBandwidth() );
+            busGroup.addValue( "total_usage_max"    , total.getMax() , true , true , result.getBandwidth() );
             
             if( !UnitUtils.isEmpty( result.getBandwidth() ) )
             {

@@ -6,6 +6,7 @@ public class ReportValue<T> implements Cloneable
     private boolean lessIsBetter;
     private String name;
     private T value;
+    private T reference;
 
     public ReportValue( String name , T value )
     {
@@ -65,6 +66,17 @@ public class ReportValue<T> implements Cloneable
         this.value = value;
         return this;
     }
+
+    public T getReference()
+    {
+        return reference;
+    }
+
+    public ReportValue<T> setReference( T reference )
+    {
+        this.reference = reference;
+        return this;
+    }
     
     @Override
     public ReportValue clone()
@@ -86,7 +98,7 @@ public class ReportValue<T> implements Cloneable
                 valueNew , 
                 important , 
                 lessIsBetter
-            );
+            ).setReference( reference );
         }
     }
     
@@ -104,6 +116,9 @@ public class ReportValue<T> implements Cloneable
         
         builder.append( ", important: " );
         builder.append( important );
+        
+        builder.append( ", reference: " );
+        builder.append( reference );
         builder.append( "\n" );
         
         return builder.toString();
