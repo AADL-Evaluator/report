@@ -3,7 +3,6 @@ package org.osate.aadl.aadlevaluator.report.evaluate;
 import org.osate.aadl.evaluator.unit.UnitUtils;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;

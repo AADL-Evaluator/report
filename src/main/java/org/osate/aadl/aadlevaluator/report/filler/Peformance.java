@@ -41,7 +41,13 @@ public class Peformance
             group.addValue( sub.getComponent().getName() , sub.getTotal() , false , false );
         }
         
-        group.addValue( "total" , result.getTotal() , true , true );
+        group.addValue( 
+            "total" , 
+            result.getTotal() , 
+            true , 
+            true ,
+            ReferenceUtils.getMax( component , "weight" )
+        );
         
         return group;
     }
@@ -59,7 +65,13 @@ public class Peformance
             group.addValue( sub.getComponent().getName() , sub.getTotal() , false , false );
         }
         
-        group.addValue( "total" , result.getTotal() , true , true );
+        group.addValue( 
+            "total" , 
+            result.getTotal() , 
+            true , 
+            true ,
+            ReferenceUtils.getMax( component , "price" )
+        );
         
         return group;
     }
@@ -71,13 +83,14 @@ public class Peformance
         BandwidthEvaluate eva = new BandwidthEvaluate( component );
         for( BandwidthEvaluate.BusResult result : eva.evaluate() )
         {
-            ReportGroup busGroup = new ReportGroup( result.getSubcomponent().getName() );
+            String busName = result.getSubcomponent().getName();
+            ReportGroup busGroup = new ReportGroup( busName );
             
             BandwidthEvaluate.IndividualResult total = result.getTotal();
             
             for( BandwidthEvaluate.IndividualResult sub : result.getResults() )
             {
-                String name = sub.getDevice() == null 
+                String deviceName = sub.getDevice() == null 
                     ? "" 
                     : sub.getDevice() instanceof String
                         ? sub.getDevice().toString()
@@ -90,7 +103,7 @@ public class Peformance
                 
                 subGroup.addValue( "usage_min" , sub.getMin() , false , false );
                 subGroup.addValue( "usage_max" , sub.getMax() , false , false );
-                subGroup.addValue( "device" , name            , false , false );
+                subGroup.addValue( "device" , deviceName            , false , false );
                 subGroup.addValue( "error"  , sub.getErrors() , false , false );
                 
                 busGroup.addSubgroup( subGroup );
@@ -103,19 +116,22 @@ public class Peformance
             if( !UnitUtils.isEmpty( result.getBandwidth() ) )
             {
                 double bandwidth = UnitUtils.getValue( result.getBandwidth() );
+                String reference = ReferenceUtils.getMax( component , busName , "latency" );
                 
                 busGroup.addValue( 
                     "total_latency_min" , 
                     UnitUtils.getValue( total.getMin() ) / bandwidth + " s" , 
                     true , 
-                    true 
+                    true ,
+                    reference
                 );
                 
                 busGroup.addValue( 
                     "total_latency_max" , 
                     UnitUtils.getValue( total.getMax() ) / bandwidth + " s" , 
                     true , 
-                    true 
+                    true ,
+                    reference
                 );
             }
             
@@ -132,13 +148,13 @@ public class Peformance
         MipsEvaluate eva = new MipsEvaluate( component );
         for( MipsEvaluate.MipsResult result : eva.evaluate() )
         {
-            String name = result.getElement() instanceof Subcomponent
+            String cpuName = result.getElement() instanceof Subcomponent
                 ? ((Subcomponent) result.getElement()).getName()
                 : result.getElement().toString();
             
             // ---- //
             
-            ReportGroup cpuGroup = new ReportGroup( name );
+            ReportGroup cpuGroup = new ReportGroup( cpuName );
             
             for( MipsEvaluate.MipsResult sub : result.getResults() )
             {
@@ -146,9 +162,10 @@ public class Peformance
                 cpuGroup.addValue( sub.getElement().toString() + "_max" , sub.getValueMaxStr() , false , false );
             }
             
+            String reference = ReferenceUtils.getMax( component , cpuName , "usage" );
             cpuGroup.addValue( "connections_number" , result.getResults().size() , false , false );
-            cpuGroup.addValue( "usage_min"          , result.getValueMinStr() , true  , true  );
-            cpuGroup.addValue( "usage_max"          , result.getValueMaxStr() , true  , true  );
+            cpuGroup.addValue( "usage_min" , result.getValueMinStr() , true , true , reference );
+            cpuGroup.addValue( "usage_max" , result.getValueMaxStr() , true , true , reference );
             
             group.addSubgroup( cpuGroup );
         }
