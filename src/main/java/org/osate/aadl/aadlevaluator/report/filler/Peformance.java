@@ -42,6 +42,7 @@ public class Peformance
         }
         
         group.addValue( 
+            "Weight Total" , 
             "total" , 
             result.getTotal() , 
             true , 
@@ -66,6 +67,7 @@ public class Peformance
         }
         
         group.addValue( 
+            "Price Total" ,
             "total" , 
             result.getTotal() , 
             true , 
@@ -109,9 +111,9 @@ public class Peformance
                 busGroup.addSubgroup( subGroup );
             }
             
-            busGroup.addValue( "connections_number" , result.getResults().size() , false , false );
-            busGroup.addValue( "total_usage_min"    , total.getMin() , true , true , result.getBandwidth() );
-            busGroup.addValue( "total_usage_max"    , total.getMax() , true , true , result.getBandwidth() );
+            busGroup.addValue( busName  + " Connections" , "connections_number" , result.getResults().size() , false , false , "" );
+            busGroup.addValue( busName  + " Usage Min" , "total_usage_min" , total.getMin() , true , true , result.getBandwidth() );
+            busGroup.addValue( busName  + " Usage Min" , "total_usage_max" , total.getMax() , true , true , result.getBandwidth() );
             
             if( !UnitUtils.isEmpty( result.getBandwidth() ) )
             {
@@ -119,6 +121,7 @@ public class Peformance
                 String reference = ReferenceUtils.getMax( component , busName , "latency" );
                 
                 busGroup.addValue( 
+                    busName  + " Latency Min" ,
                     "total_latency_min" , 
                     UnitUtils.getValue( total.getMin() ) / bandwidth + " s" , 
                     true , 
@@ -127,6 +130,7 @@ public class Peformance
                 );
                 
                 busGroup.addValue( 
+                    busName  + " Latency Max" ,
                     "total_latency_max" , 
                     UnitUtils.getValue( total.getMax() ) / bandwidth + " s" , 
                     true , 
@@ -163,9 +167,9 @@ public class Peformance
             }
             
             String reference = ReferenceUtils.getMax( component , cpuName , "usage" );
-            cpuGroup.addValue( "connections_number" , result.getResults().size() , false , false );
-            cpuGroup.addValue( "usage_min" , result.getValueMinStr() , true , true , reference );
-            cpuGroup.addValue( "usage_max" , result.getValueMaxStr() , true , true , reference );
+            cpuGroup.addValue( cpuName  + " Connections" , "connections_number" , result.getResults().size() , false , false , "" );
+            cpuGroup.addValue( cpuName  + " Usage Min" , "usage_min" , result.getValueMinStr() , true , true , reference );
+            cpuGroup.addValue( cpuName  + " Usage Max" , "usage_max" , result.getValueMaxStr() , true , true , reference );
             
             group.addSubgroup( cpuGroup );
         }

@@ -8,6 +8,7 @@ public class ReportFactor implements Cloneable
     private String characteristic;
     private String subcharacteristic;
     private String name;
+    private String title;
     
     private BigDecimal min;
     private BigDecimal max;
@@ -32,7 +33,7 @@ public class ReportFactor implements Cloneable
         return this;
     }
 
-    public String getSubcharacteristic()
+    public String getSubcharacteristic() 
     {
         return subcharacteristic;
     }
@@ -42,8 +43,8 @@ public class ReportFactor implements Cloneable
         this.subcharacteristic = subcharacteristic;
         return this;
     }
-    
-    public String getName()
+
+    public String getName() 
     {
         return name;
     }
@@ -51,6 +52,17 @@ public class ReportFactor implements Cloneable
     public ReportFactor setName( String name )
     {
         this.name = name;
+        return this;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public ReportFactor setTitle( String title )
+    {
+        this.title = title;
         return this;
     }
     
@@ -171,7 +183,7 @@ public class ReportFactor implements Cloneable
     @Override
     public String toString() 
     {
-        return getName();
+        return getTitle();
     }
 
     @Override
@@ -187,9 +199,8 @@ public class ReportFactor implements Cloneable
                 .setLessIsBetter( lessIsBetter )
                 .setMax( max )
                 .setMin( min )
-                .setName( name )
+                .setTitle( title )
                 .setCharacteristic( characteristic )
-                .setSubcharacteristic( subcharacteristic )
                 .setUnit( unit )
                 .setUserFactor( userFactor );
         }

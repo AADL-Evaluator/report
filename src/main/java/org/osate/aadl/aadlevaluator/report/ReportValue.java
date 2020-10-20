@@ -5,11 +5,13 @@ public class ReportValue<T> implements Cloneable
     private boolean important;
     private boolean lessIsBetter;
     private String name;
+    private String title;
     private T value;
     private T reference;
 
     public ReportValue( String name , T value )
     {
+        this.title = name;
         this.name  = name;
         this.value = value;
         this.important = false;
@@ -17,6 +19,7 @@ public class ReportValue<T> implements Cloneable
 
     public ReportValue( String name , T value , boolean important , boolean lessIsBetter )
     {
+        this.title = name;
         this.name  = name;
         this.value = value;
         this.important = important;
@@ -53,6 +56,17 @@ public class ReportValue<T> implements Cloneable
     public ReportValue<T> setName( String name )
     {
         this.name = name;
+        return this;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public ReportValue<T> setTitle( String title )
+    {
+        this.title = title;
         return this;
     }
 

@@ -41,6 +41,15 @@ public class ReportGroup implements Cloneable
         );
     }
     
+    public ReportGroup addValue( String title , String name , Object value , boolean important , boolean lessIsBetter , String reference )
+    {
+        return addValue( 
+            new ReportValue( name , value , important , lessIsBetter )
+                .setReference( reference ) 
+                .setTitle( title ) 
+        );
+    }
+    
     public String getName() 
     {
         return name;

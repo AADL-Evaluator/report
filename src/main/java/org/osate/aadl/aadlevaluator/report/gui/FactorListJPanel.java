@@ -48,8 +48,8 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
         factors = new LinkedList<>();
         
         table.addColumn( new FieldTableColumn( "characteristic"    , "characteristic"    ) );
-        table.addColumn( new FieldTableColumn( "subcharacteristic" , "subcharacteristic" ) );
-        table.addColumn( new FieldTableColumn( "name" , "name" ) );
+        //table.addColumn( new FieldTableColumn( "subcharacteristic" , "subcharacteristic" ) );
+        table.addColumn( new FieldTableColumn( "attribute" , "title" ) );
         
         table.addColumn( new CustomTableColumn<ReportFactor,String>( "range min" , 50 ){
             @Override
@@ -223,8 +223,9 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
     
     private boolean isEligible( final ReportFactor factor , final String filter )
     {
-        return (weightJComboBox.getSelectedIndex() == 1 || factor.getPropertyFactor().doubleValue() != 0)
-            && (filter.isEmpty() || factor.getName().toUpperCase().contains( filter ) );
+        return (weightJComboBox.getSelectedIndex() == 1 
+                || factor.getPropertyFactor().doubleValue() != 0)
+            && (filter.isEmpty() || factor.getTitle().toUpperCase().contains( filter ) );
     }
     
     public abstract void save( final EvolutionReport resume , final Collection<ReportFactor> factors );

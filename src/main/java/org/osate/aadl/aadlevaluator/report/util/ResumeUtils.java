@@ -76,6 +76,8 @@ public class ResumeUtils
                 ? entry.getKey() 
                 : parent + "." + entry.getKey();
             
+            String title = entry.getValue().getTitle();
+            
             // System.out.println( "factor name: " + name );
             
             if( resume.containsKey( entry.getKey() ) )
@@ -118,6 +120,7 @@ public class ResumeUtils
                         .setCharacteristic( g1 )
                         .setSubcharacteristic( g2 )
                         .setName( name )
+                        .setTitle( title )
                         .setMax( new BigDecimal( 0 ) )
                         .setMin( new BigDecimal( 0 ) )
                         .setUnit( "" )
@@ -134,6 +137,7 @@ public class ResumeUtils
                         .setCharacteristic( g1 )
                         .setSubcharacteristic( g2 )
                         .setName( name )
+                        .setTitle( title )
                         .setMax( new BigDecimal( (Double) entry.getValue().getValue() ) )
                         .setMin( new BigDecimal( (Double) entry.getValue().getValue() ) )
                         .setUnit( "" )
@@ -150,6 +154,7 @@ public class ResumeUtils
                         .setCharacteristic( g1 )
                         .setSubcharacteristic( g2 )
                         .setName( name )
+                        .setTitle( title )
                         .setMax( new BigDecimal( (Integer) entry.getValue().getValue() ) )
                         .setMin( new BigDecimal( (Integer) entry.getValue().getValue() ) )
                         .setUnit( "" )
@@ -179,6 +184,7 @@ public class ResumeUtils
                         .setCharacteristic( g1 )
                         .setSubcharacteristic( g2 )
                         .setName( name )
+                        .setTitle( title )
                         .setMax( new BigDecimal( value ) )
                         .setMin( new BigDecimal( value ) )
                         .setUnit( unit )

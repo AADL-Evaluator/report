@@ -39,8 +39,8 @@ public class MoreIsLessStrategy extends Strategy
                 )
             );
             
-            System.out.println( "[MORE IS LESS] name.: " 
-                + factor.getName() 
+            System.out.println( "[MORE IS LESS] title: " 
+                + factor.getTitle()
                 + " | user factor: " 
                 + factor.getUserFactor()
             );

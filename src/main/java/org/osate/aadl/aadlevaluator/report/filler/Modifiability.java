@@ -35,14 +35,14 @@ public class Modifiability
         }
         
         ReportGroup subs = subGroup.getSubgroup( "subcomponents" )
-            .addValue( "added"   , 0 , false , false )
-            .addValue( "changed" , 0 , false , false )
-            .addValue( "deleted" , 0 , false , false );
+            .addValue( "Subcomponents Added"   , "added"   , 0 , false , false , "" )
+            .addValue( "Subcomponents Changed" , "changed" , 0 , false , false , "" )
+            .addValue( "Subcomponents Deleted" , "deleted" , 0 , false , false , "" );
         
         ReportGroup cons = subGroup.getSubgroup( "connections" )
-            .addValue( "added"   , 0 , false , false )
-            .addValue( "changed" , 0 , false , false )
-            .addValue( "deleted" , 0 , false , false );
+            .addValue( "Connections Added"   , "added"   , 0 , false , false , "" )
+            .addValue( "Connections Changed" , "changed" , 0 , false , false , "" )
+            .addValue( "Connections Deleted" , "deleted" , 0 , false , false , "" );
         
         for( Map.Entry<String,List<String>> entry : diff.entrySet() )
         {
@@ -79,7 +79,14 @@ public class Modifiability
             add( group , sub.getComponent().getType() );
         }
         
-        group.addValue( "total" , component.getSubcomponentsAll().size() , true , true );
+        group.addValue( 
+            "Subcomponents Total" , 
+            "total" , 
+            component.getSubcomponentsAll().size() , 
+            true , 
+            true , 
+            "" 
+        );
         
         return group;
     }
@@ -94,7 +101,14 @@ public class Modifiability
             add( group , connection.getComponentB().getType() );
         }
         
-        group.addValue( "total" , component.getConnectionsAll().size() , true , true );
+        group.addValue( 
+            "Connections total" , 
+            "total" , 
+            component.getConnectionsAll().size() , 
+            true , 
+            true ,
+            ""
+        );
         
         return group;
     }
