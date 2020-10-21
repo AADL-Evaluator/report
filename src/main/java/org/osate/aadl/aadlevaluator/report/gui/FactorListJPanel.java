@@ -72,14 +72,7 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
             }
         });
         
-        table.addColumn( new CustomTableColumn<ReportFactor,BigDecimal>( "weight calculated" , 50 ){
-            @Override
-            public BigDecimal getValue( ReportFactor factor ) {
-                return factor.getWeightCalculated();
-            }
-        });
-        
-        table.addColumn( new CustomTableColumn<ReportFactor,BigDecimal>( "weight defined" , 50 ){
+        table.addColumn( new CustomTableColumn<ReportFactor,BigDecimal>( "score" , 50 ){
             @Override
             public BigDecimal getValue( ReportFactor factor ) {
                 return factor.getWeightDefined();
