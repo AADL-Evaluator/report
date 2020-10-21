@@ -262,15 +262,15 @@ public class ResumeUtils
         {
             if( value.getValue() instanceof Double )
             {
-                return resume.getGlobalFactor( new BigDecimal( (Double) value.getValue() ) );
+                return resume.getWeightGlobal( new BigDecimal( (Double) value.getValue() ) );
             }
             else if( value.getValue() instanceof Integer )
             {
-                return resume.getGlobalFactor( new BigDecimal( (Integer) value.getValue() ) );
+                return resume.getWeightGlobal( new BigDecimal( (Integer) value.getValue() ) );
             }
             else
             {
-                return resume.getGlobalFactor( 
+                return resume.getWeightGlobal( 
                     new BigDecimal( UnitUtils.getValue( value.getValue().toString() ) )
                 );
             }

@@ -168,11 +168,11 @@ public class ReportJSON
         writer.append( SEPARATOR );
         writer.append( System.lineSeparator() );
         
-        append( writer , space , "property_factor" , factor.getPropertyFactor() );
+        append( writer , space , "property_factor" , factor.getWeightCalculated() );
         writer.append( SEPARATOR );
         writer.append( System.lineSeparator() );
         
-        append( writer , space , "user_factor"     , factor.getUserFactor()     );
+        append( writer , space , "user_factor"     , factor.getWeightDefined()     );
         writer.write( System.lineSeparator() );
         
         writer.write( space );

@@ -20,7 +20,7 @@ public class MoreIsLessStrategy extends Strategy
         
         for( ReportFactor factor : factors )
         {
-            total = total.add( factor.getPropertyFactor() );
+            total = total.add( factor.getWeightCalculated() );
         }
         
         if( total.doubleValue() == 0 )
@@ -33,16 +33,16 @@ public class MoreIsLessStrategy extends Strategy
         for( ReportFactor factor : factors )
         {
             // 1.0 - (factor.getPropertyFactor() / total)
-            factor.setUserFactor(
+            factor.setWeightDefined(
                 new BigDecimal( 1.0 ).subtract(
-                    factor.getPropertyFactor().divide( total , RoundingMode.HALF_UP )
+                    factor.getWeightCalculated().divide( total , 20 , RoundingMode.HALF_UP )
                 )
             );
             
             System.out.println( "[MORE IS LESS] title: " 
                 + factor.getTitle()
                 + " | user factor: " 
-                + factor.getUserFactor()
+                + factor.getWeightDefined()
             );
         }
     }

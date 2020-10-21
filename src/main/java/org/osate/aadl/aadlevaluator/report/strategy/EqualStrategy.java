@@ -17,14 +17,14 @@ public class EqualStrategy extends Strategy
     public void apply( Collection<ReportFactor> factors )
     {
         BigDecimal value = new BigDecimal( 1.0 )
-            .divide( new BigDecimal( factors.size() ) , RoundingMode.HALF_UP ); //1.0 / factors.size();
+            .divide( new BigDecimal( factors.size() ) , 20 , RoundingMode.HALF_UP ); //1.0 / factors.size();
         
         System.out.println( "[EQUAL CALCULATE] total: " + factors.size() );
         System.out.println( "[EQUAL CALCULATE] value: " + value );
         
         for( ReportFactor factor : factors )
         {
-            factor.setUserFactor( value );
+            factor.setWeightDefined( value );
         }
     }
     

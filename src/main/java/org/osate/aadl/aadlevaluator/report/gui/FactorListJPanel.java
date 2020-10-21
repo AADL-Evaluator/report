@@ -75,11 +75,17 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
         table.addColumn( new CustomTableColumn<ReportFactor,BigDecimal>( "weight calculated" , 50 ){
             @Override
             public BigDecimal getValue( ReportFactor factor ) {
-                return factor.getPropertyFactor();
+                return factor.getWeightCalculated();
             }
         });
         
-        table.addColumn( new FieldTableColumn( "weight defined" , "userFactor" , 50 ) );
+        table.addColumn( new CustomTableColumn<ReportFactor,BigDecimal>( "weight defined" , 50 ){
+            @Override
+            public BigDecimal getValue( ReportFactor factor ) {
+                return factor.getWeightDefined();
+            }
+        });
+        
         table.setUp();
         
         SwingUtilities.invokeLater( new Runnable() {
@@ -115,7 +121,7 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
             @Override
             public void setAllZero() {
                 for( ReportFactor factor : factors ){
-                    factor.setUserFactor( new BigDecimal( 0 ) );
+                    factor.setWeightDefined( new BigDecimal( 0 ) );
                 }
             }
         });
@@ -149,13 +155,13 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
         }
         
         FactorJDialog dialog = new FactorJDialog( SwingUtilities.getWindowAncestor( this ) );
-        dialog.setFactor( table.getSelectedObject().getUserFactor() );
+        dialog.setFactor( table.getSelectedObject().getWeightDefined() );
         dialog.setVisible( true );
         dialog.dispose();
         
         for( ReportFactor report : table.getSelectedObjects() )
         {
-            report.setUserFactor( dialog.getFactor() );
+            report.setWeightDefined( dialog.getFactor() );
         }
     }
     
@@ -224,7 +230,7 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
     private boolean isEligible( final ReportFactor factor , final String filter )
     {
         return (weightJComboBox.getSelectedIndex() == 1 
-                || factor.getPropertyFactor().doubleValue() != 0)
+                || factor.getWeightCalculated().doubleValue() != 0)
             && (filter.isEmpty() || factor.getTitle().toUpperCase().contains( filter ) );
     }
     
@@ -300,7 +306,10 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
 
             for( ReportFactor factor : factors )
             {
-                big = big.add( factor.getUserFactor() );
+                if( factor.getWeightDefined() != null )
+                {
+                    big = big.add( factor.getWeightDefined() );
+                }
             }
 
             if( big.intValue() > 1 )
@@ -314,6 +323,8 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
         }
         catch( Exception err )
         {
+            err.printStackTrace();
+            
             JOptionPane.showMessageDialog(
                 this ,
                 err.getMessage()  ,

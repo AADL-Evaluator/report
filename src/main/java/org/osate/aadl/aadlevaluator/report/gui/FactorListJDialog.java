@@ -71,7 +71,7 @@ public class FactorListJDialog extends javax.swing.JDialog
         table.addColumn( new CustomTableColumn<ReportFactor,BigDecimal>( "property factor" ){
             @Override
             public BigDecimal getValue( ReportFactor factor ) {
-                return factor.getPropertyFactor();
+                return factor.getWeightCalculated();
             }
         });
         
@@ -118,7 +118,7 @@ public class FactorListJDialog extends javax.swing.JDialog
                 @Override
                 public void setAllZero() {
                     for( ReportFactor factor : factors ){
-                        factor.setUserFactor( new BigDecimal( 0 ) );
+                        factor.setWeightDefined( new BigDecimal( 0 ) );
                     }
                 }
             }
@@ -133,13 +133,13 @@ public class FactorListJDialog extends javax.swing.JDialog
         }
         
         FactorJDialog dialog = new FactorJDialog( this );
-        dialog.setFactor( table.getSelectedObject().getUserFactor() );
+        dialog.setFactor( table.getSelectedObject().getWeightDefined() );
         dialog.setVisible( true );
         dialog.dispose();
         
         for( ReportFactor report : table.getSelectedObjects() )
         {
-            report.setUserFactor( dialog.getFactor() );
+            report.setWeightDefined( dialog.getFactor() );
         }
     }
     
@@ -198,7 +198,7 @@ public class FactorListJDialog extends javax.swing.JDialog
         {
             for( ReportFactor factor : factors )
             {
-                if( factor.getPropertyFactor().doubleValue() != 0 )
+                if( factor.getWeightCalculated().doubleValue() != 0 )
                 {
                     table.addData( factor );
                 }
@@ -293,7 +293,7 @@ public class FactorListJDialog extends javax.swing.JDialog
             
             for( ReportFactor factor : factors )
             {
-                big = big.add( factor.getUserFactor() );
+                big = big.add( factor.getWeightDefined() );
             }
             
             if( big.intValue() > 1 )

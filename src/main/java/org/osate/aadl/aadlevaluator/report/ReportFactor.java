@@ -14,12 +14,13 @@ public class ReportFactor implements Cloneable
     private BigDecimal max;
     private String unit;
     private String reference;
-    private BigDecimal userFactor;
+    private BigDecimal weightDefined;
     private boolean lessIsBetter;
     
     public ReportFactor() 
     {
-        this.lessIsBetter = false;
+        this.lessIsBetter  = true;
+        this.weightDefined = new BigDecimal( 0 );
     }
 
     public String getCharacteristic() 
@@ -99,14 +100,19 @@ public class ReportFactor implements Cloneable
         return this;
     }
 
-    public BigDecimal getUserFactor()
+    public BigDecimal getWeightDefined()
     {
-        return userFactor;
+        if( weightDefined == null )
+        {
+            weightDefined = new BigDecimal( 0 );
+        }
+        
+        return weightDefined;
     }
 
-    public ReportFactor setUserFactor( BigDecimal userFactor )
+    public ReportFactor setWeightDefined( BigDecimal weightDefined )
     {
-        this.userFactor = userFactor;
+        this.weightDefined = weightDefined;
         return this;
     }
 
@@ -146,38 +152,38 @@ public class ReportFactor implements Cloneable
         return max.setScale( 4 , RoundingMode.HALF_EVEN ) + " " + unit;
     }
     
-    public BigDecimal getPropertyFactor()
+    public BigDecimal getWeightCalculated()
     {
         BigDecimal result = this.max.subtract( this.min );
         
         return result.doubleValue() == 0 
             ? new BigDecimal( 0.0 )
-            : new BigDecimal( 1.0 ).divide( result , RoundingMode.HALF_UP );
+            : new BigDecimal( 1.0 ).divide( result , 20 , RoundingMode.HALF_UP );
     }
     
-    public BigDecimal getValueFactor( BigDecimal value )
+    public BigDecimal getWeightByValue( BigDecimal value )
     {
-        // (value - this.min) / getPropertyFactor()
+        // (value - this.min) / getWeightCalculated()
         return value.subtract( this.min )
-                .multiply( getPropertyFactor() );
+                .multiply( getWeightCalculated() );
     }
     
-    public BigDecimal getGlobalFactor( BigDecimal value )
+    public BigDecimal getWeightGlobal( BigDecimal value )
     {
-        if( userFactor == null 
-            || userFactor.doubleValue() == 0
-            || getPropertyFactor().doubleValue() == 0 )
+        if( weightDefined == null 
+            || weightDefined.doubleValue() == 0
+            || getWeightCalculated().doubleValue() == 0 )
         {
             return new BigDecimal( 0 );
         }
         
-        BigDecimal result = getValueFactor( value );
+        BigDecimal result = getWeightByValue( value );
         
         return lessIsBetter 
             ? new BigDecimal( 1 )
                 .subtract( result )
-                .multiply( userFactor )             //(1 - result) * userFactor
-            : result.multiply( userFactor );        // result * userFactor
+                .multiply( weightDefined )             //(1 - result) * userFactor
+            : result.multiply( weightDefined );        // result * userFactor
     }
 
     @Override
@@ -202,7 +208,7 @@ public class ReportFactor implements Cloneable
                 .setTitle( title )
                 .setCharacteristic( characteristic )
                 .setUnit( unit )
-                .setUserFactor( userFactor );
+                .setWeightDefined( weightDefined );
         }
     }
     
