@@ -1,6 +1,7 @@
 package org.osate.aadl.aadlevaluator.report;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 
 public class ReportFactor implements Cloneable
@@ -158,14 +159,15 @@ public class ReportFactor implements Cloneable
         
         return result.doubleValue() == 0 
             ? new BigDecimal( 0.0 )
-            : new BigDecimal( 1.0 ).divide( result , 20 , RoundingMode.HALF_UP );
+            : new BigDecimal( 1.0 ).divide( result , MathContext.DECIMAL32 );
     }
     
     public BigDecimal getWeightByValue( BigDecimal value )
     {
         // (value - this.min) / getWeightCalculated()
         return value.subtract( this.min )
-                .multiply( getWeightCalculated() );
+            .add( new BigDecimal( 0 ) )             // gambiarra para evitar -0
+            .multiply( getWeightCalculated() );
     }
     
     public BigDecimal getWeightGlobal( BigDecimal value )
