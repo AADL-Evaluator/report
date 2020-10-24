@@ -118,7 +118,7 @@ public class FactorListJDialog extends javax.swing.JDialog
                 @Override
                 public void setAllZero() {
                     for( ReportFactor factor : factors ){
-                        factor.setWeightDefined( new BigDecimal( 0 ) );
+                        factor.setWeightDefined( BigDecimal.ZERO );
                     }
                 }
             }
@@ -289,7 +289,7 @@ public class FactorListJDialog extends javax.swing.JDialog
     private void saveJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveJButtonActionPerformed
         try
         {
-            BigDecimal big = new BigDecimal( 0 );
+            BigDecimal big = BigDecimal.ZERO;
             
             for( ReportFactor factor : factors )
             {

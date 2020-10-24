@@ -113,7 +113,7 @@ public class Peformance
             
             busGroup.addValue( busName  + " Connections" , "connections_number" , result.getResults().size() , false , false , "" );
             busGroup.addValue( busName  + " Usage Min" , "total_usage_min" , total.getMin() , true , true , result.getBandwidth() );
-            busGroup.addValue( busName  + " Usage Min" , "total_usage_max" , total.getMax() , true , true , result.getBandwidth() );
+            busGroup.addValue( busName  + " Usage Max" , "total_usage_max" , total.getMax() , true , true , result.getBandwidth() );
             
             if( !UnitUtils.isEmpty( result.getBandwidth() ) )
             {

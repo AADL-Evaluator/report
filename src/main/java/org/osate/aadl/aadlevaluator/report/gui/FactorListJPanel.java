@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.JXHeader;
@@ -24,6 +26,8 @@ import org.osate.aadl.aadlevaluator.report.ReportValue;
 
 public abstract class FactorListJPanel extends javax.swing.JPanel 
 {
+    private static final Logger LOG = Logger.getLogger( FactorListJPanel.class.getName() );
+    
     private EvolutionReport resume;
     private List<ReportFactor> factors;
     private FluentTable<ReportFactor> table;
@@ -114,7 +118,7 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
             @Override
             public void setAllZero() {
                 for( ReportFactor factor : factors ){
-                    factor.setWeightDefined( new BigDecimal( 0 ) );
+                    factor.setWeightDefined( BigDecimal.ZERO );
                 }
             }
         });
@@ -295,17 +299,25 @@ public abstract class FactorListJPanel extends javax.swing.JPanel
     private void saveJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveJButtonActionPerformed
         try
         {
-            BigDecimal big = new BigDecimal( 0 );
+            LOG.log( Level.INFO , "Sum all scores..." );
+            BigDecimal big = BigDecimal.ZERO;
 
             for( ReportFactor factor : factors )
             {
                 if( factor.getWeightDefined() != null )
                 {
+                    LOG.log( Level.INFO , "{0} = {1}" , new Object[]{ 
+                        factor.getName(), 
+                        factor.getWeightDefined()
+                    });
+                    
                     big = big.add( factor.getWeightDefined() );
                 }
             }
+            
+            LOG.log( Level.INFO , "results = {0}" , big );
 
-            if( big.intValue() > 1 )
+            if( big.doubleValue() > 1.0 )
             {
                 throw new Exception(
                     "The sum of all factor is over 1. Please, edit one or more factor to correct that."

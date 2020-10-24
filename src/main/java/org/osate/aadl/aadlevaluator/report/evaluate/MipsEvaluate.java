@@ -1,5 +1,6 @@
 package org.osate.aadl.aadlevaluator.report.evaluate;
 
+import java.math.BigDecimal;
 import org.osate.aadl.evaluator.unit.UnitUtils;
 import java.text.MessageFormat;
 import java.util.LinkedList;
@@ -264,8 +265,8 @@ public class MipsEvaluate
     {
         private final Object element;
         private final List<MipsResult> results;
-        private final double valueMin;
-        private final double valueMax;
+        private final BigDecimal valueMin;
+        private final BigDecimal valueMax;
         private final double capacity;
         private final String error;
 
@@ -273,8 +274,8 @@ public class MipsEvaluate
         {
             this.element  = element;
             this.results  = new LinkedList<>();
-            this.valueMin = 0;
-            this.valueMax = 0;
+            this.valueMin = BigDecimal.ZERO;
+            this.valueMax = BigDecimal.ZERO;
             this.capacity = 0;
             this.error    = null;
         }
@@ -283,8 +284,8 @@ public class MipsEvaluate
         {
             this.element  = element;
             this.results  = new LinkedList<>();
-            this.valueMin = value;
-            this.valueMax = value;
+            this.valueMin = BigDecimal.valueOf( value );
+            this.valueMax = BigDecimal.valueOf( value );
             this.capacity = 0;
             this.error    = null;
         }
@@ -293,8 +294,8 @@ public class MipsEvaluate
         {
             this.element = element;
             this.results = new LinkedList<>();
-            this.valueMin = value;
-            this.valueMax = value;
+            this.valueMin = BigDecimal.valueOf( value );
+            this.valueMax = BigDecimal.valueOf( value );
             this.capacity = capacity;
             this.error   = null;
         }
@@ -303,8 +304,8 @@ public class MipsEvaluate
         {
             this.element = element;
             this.results = new LinkedList<>();
-            this.valueMin = min;
-            this.valueMax = max;
+            this.valueMin = BigDecimal.valueOf( min );
+            this.valueMax = BigDecimal.valueOf( max );
             this.capacity = capacity;
             this.error   = null;
         }
@@ -313,8 +314,8 @@ public class MipsEvaluate
         {
             this.element = element;
             this.results = new LinkedList<>();
-            this.valueMin = 0;
-            this.valueMax = 0;
+            this.valueMin = BigDecimal.ZERO;
+            this.valueMax = BigDecimal.ZERO;
             this.capacity = 0;
             this.error = error;
         }
@@ -329,14 +330,14 @@ public class MipsEvaluate
             return results;
         }
 
-        public double getValueMin()
+        public BigDecimal getValueMin()
         {
             return results.isEmpty() 
                 ? valueMin
                 : getTotalMin();
         }
 
-        public double getValueMax()
+        public BigDecimal getValueMax()
         {
             return results.isEmpty() 
                 ? valueMax
@@ -378,28 +379,28 @@ public class MipsEvaluate
                 && !error.trim().isEmpty();
         }
         
-        private double getTotalMin()
+        private BigDecimal getTotalMin()
         {
-            double mips = 0;
+            BigDecimal total = BigDecimal.ZERO;
             
             for( MipsResult r : getResults() )
             {
-                mips += r.getValueMin();
+                total = total.add( r.getValueMin() );
             }
             
-            return mips;
+            return total;
         }
         
-        private double getTotalMax()
+        private BigDecimal getTotalMax()
         {
-            double mips = 0;
+            BigDecimal total = BigDecimal.ZERO;
             
             for( MipsResult r : getResults() )
             {
-                mips += r.getValueMax();
+                total = total.add( r.getValueMax() );
             }
             
-            return mips;
+            return total;
         }
     }
 }

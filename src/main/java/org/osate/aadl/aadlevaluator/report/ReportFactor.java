@@ -3,9 +3,13 @@ package org.osate.aadl.aadlevaluator.report;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ReportFactor implements Cloneable
 {
+    private static final Logger LOG = Logger.getLogger( ReportFactor.class.getName() );
+    
     private String characteristic;
     private String subcharacteristic;
     private String name;
@@ -21,7 +25,7 @@ public class ReportFactor implements Cloneable
     public ReportFactor() 
     {
         this.lessIsBetter  = true;
-        this.weightDefined = new BigDecimal( 0 );
+        this.weightDefined = BigDecimal.ZERO;
     }
 
     public String getCharacteristic() 
@@ -73,6 +77,12 @@ public class ReportFactor implements Cloneable
         return min;
     }
 
+    public ReportFactor setMin( double min )
+    {
+        this.min = BigDecimal.valueOf( min );
+        return this;
+    }
+    
     public ReportFactor setMin( BigDecimal min )
     {
         this.min = min;
@@ -82,6 +92,12 @@ public class ReportFactor implements Cloneable
     public BigDecimal getMax() 
     {
         return max;
+    }
+
+    public ReportFactor setMax( double max )
+    {
+        this.max = BigDecimal.valueOf( max );
+        return this;
     }
 
     public ReportFactor setMax( BigDecimal max )
@@ -105,7 +121,7 @@ public class ReportFactor implements Cloneable
     {
         if( weightDefined == null )
         {
-            weightDefined = new BigDecimal( 0 );
+            weightDefined = BigDecimal.ZERO;
         }
         
         return weightDefined;
@@ -145,12 +161,12 @@ public class ReportFactor implements Cloneable
     
     public String getMinUnit()
     {
-        return min.setScale( 4 , RoundingMode.HALF_EVEN ) + " " + unit;
+        return min + " " + unit;
     }
     
     public String getMaxUnit()
     {
-        return max.setScale( 4 , RoundingMode.HALF_EVEN ) + " " + unit;
+        return max + " " + unit;
     }
     
     public BigDecimal getWeightCalculated()
@@ -159,15 +175,15 @@ public class ReportFactor implements Cloneable
         
         return result.doubleValue() == 0 
             ? new BigDecimal( 0.0 )
-            : new BigDecimal( 1.0 ).divide( result , MathContext.DECIMAL32 );
+            : new BigDecimal( 1.0 ).divide( result , MathContext.DECIMAL128 );
     }
     
     public BigDecimal getWeightByValue( BigDecimal value )
     {
         // (value - this.min) / getWeightCalculated()
-        return value.subtract( this.min )
-            .add( new BigDecimal( 0 ) )             // gambiarra para evitar -0
-            .multiply( getWeightCalculated() );
+        return value
+            .subtract( this.min )
+            .multiply( getWeightCalculated() ).abs();
     }
     
     public BigDecimal getWeightGlobal( BigDecimal value )
@@ -176,16 +192,25 @@ public class ReportFactor implements Cloneable
             || weightDefined.doubleValue() == 0
             || getWeightCalculated().doubleValue() == 0 )
         {
-            return new BigDecimal( 0 );
+            return BigDecimal.ZERO;
         }
         
         BigDecimal result = getWeightByValue( value );
         
+        LOG.log( Level.INFO , "[SCORE] score: {0} , value : {1} , min: {2} , max: {3} , lessIsBetter: {4}, subresult: {5}" , new Object[]{
+            weightDefined , 
+            value ,
+            min ,
+            max ,
+            lessIsBetter ,
+            result.setScale( 20 , RoundingMode.HALF_UP ).doubleValue()
+        });
+        
         return lessIsBetter 
             ? new BigDecimal( 1 )
                 .subtract( result )
-                .multiply( weightDefined )             //(1 - result) * userFactor
-            : result.multiply( weightDefined );        // result * userFactor
+                .multiply( weightDefined ).abs()           //(1 - result) * userFactor
+            : result.multiply( weightDefined ).abs();      // result * userFactor
     }
 
     @Override

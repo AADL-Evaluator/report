@@ -1,7 +1,10 @@
 package org.osate.aadl.aadlevaluator.report.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.osate.aadl.aadlevaluator.report.EvolutionReport;
 import org.osate.aadl.aadlevaluator.report.ProjectReport;
 import org.osate.aadl.aadlevaluator.report.ReportFactor;
@@ -11,6 +14,7 @@ import org.osate.aadl.evaluator.unit.UnitUtils;
 
 public class ResumeUtils 
 {
+    private static final Logger LOG = Logger.getLogger( ResumeUtils.class.getName() );
     
     private ResumeUtils()
     {
@@ -78,15 +82,14 @@ public class ResumeUtils
             
             String title = entry.getValue().getTitle();
             
-            // System.out.println( "factor name: " + name );
             
             if( resume.containsKey( entry.getKey() ) )
             {
-                BigDecimal value = new BigDecimal( 0 );
+                BigDecimal value = BigDecimal.ZERO;
                 
                 try
                 {
-                    value = new BigDecimal(
+                    value = BigDecimal.valueOf(
                         UnitUtils.getValue( entry.getValue().getValue().toString() )
                     );
                 }
@@ -121,8 +124,8 @@ public class ResumeUtils
                         .setSubcharacteristic( g2 )
                         .setName( name )
                         .setTitle( title )
-                        .setMax( new BigDecimal( 0 ) )
-                        .setMin( new BigDecimal( 0 ) )
+                        .setMax( BigDecimal.ZERO )
+                        .setMin( BigDecimal.ZERO )
                         .setUnit( "" )
                         .setLessIsBetter( entry.getValue().isLessIsBetter() ) ,
                     entry.getValue().isImportant() ,
@@ -138,8 +141,8 @@ public class ResumeUtils
                         .setSubcharacteristic( g2 )
                         .setName( name )
                         .setTitle( title )
-                        .setMax( new BigDecimal( (Double) entry.getValue().getValue() ) )
-                        .setMin( new BigDecimal( (Double) entry.getValue().getValue() ) )
+                        .setMax( (Double) entry.getValue().getValue() )
+                        .setMin( (Double) entry.getValue().getValue() )
                         .setUnit( "" )
                         .setLessIsBetter( entry.getValue().isLessIsBetter() ) ,
                     entry.getValue().isImportant() ,
@@ -155,8 +158,8 @@ public class ResumeUtils
                         .setSubcharacteristic( g2 )
                         .setName( name )
                         .setTitle( title )
-                        .setMax( new BigDecimal( (Integer) entry.getValue().getValue() ) )
-                        .setMin( new BigDecimal( (Integer) entry.getValue().getValue() ) )
+                        .setMax( (Integer) entry.getValue().getValue() )
+                        .setMin( (Integer) entry.getValue().getValue() )
                         .setUnit( "" )
                         .setLessIsBetter( entry.getValue().isLessIsBetter() ) ,
                     entry.getValue().isImportant() ,
@@ -185,8 +188,8 @@ public class ResumeUtils
                         .setSubcharacteristic( g2 )
                         .setName( name )
                         .setTitle( title )
-                        .setMax( new BigDecimal( value ) )
-                        .setMin( new BigDecimal( value ) )
+                        .setMax( value )
+                        .setMin( value )
                         .setUnit( unit )
                         .setLessIsBetter( entry.getValue().isLessIsBetter() ) ,
                     entry.getValue().isImportant() ,
@@ -204,16 +207,29 @@ public class ResumeUtils
     {
         for( EvolutionReport report : project.getReports().values() )
         {
-            BigDecimal total = new BigDecimal( 0 );
+            LOG.log(Level.INFO , "evolution name: {0}" , report.getName() );
+            BigDecimal total = BigDecimal.ZERO;
             
             for( String name : project.getResume().getGroups().keySet() )
             {
-                total = total.add( caculate( 
+                BigDecimal value = caculate( 
                     project.getResume().getGroups().get( name ) , 
                     report.getGroups().get( name )
-                ));
+                );
+                
+                total = total.add( value );
+                
+                LOG.log(Level.INFO , "{0} = {1}" , new Object[]{ 
+                    name , 
+                    value.setScale( 20 , RoundingMode.HALF_UP ).doubleValue()
+                } );
             }
             
+            LOG.log(
+                Level.INFO , 
+                "total = {0}" , 
+                total.setScale( 20 , RoundingMode.HALF_UP ).doubleValue() 
+            );
             report.setFactor( total );
         }
     }
@@ -222,17 +238,17 @@ public class ResumeUtils
     {
         if( group == null )
         {
-            return new BigDecimal( 0 );
+            return BigDecimal.ZERO;
         }
         
-        BigDecimal total = new BigDecimal( 0 );
+        BigDecimal total = BigDecimal.ZERO;
         
         for( Map.Entry<String,ReportGroup> entry : resume.getSubgroups().entrySet() )
         {
             total = total.add( caculate( 
                 entry.getValue() , 
                 group.getSubgroup( entry.getKey() ) 
-            ));
+            ) );
         }
         
         for( Map.Entry<String,ReportValue> entry : resume.getValues().entrySet() )
@@ -245,7 +261,7 @@ public class ResumeUtils
             total = total.add( caculate( 
                 (ReportFactor) entry.getValue().getValue() , 
                 group.getValue( entry.getKey() ) 
-            ));
+            ) );
         }
         
         return total;
@@ -255,7 +271,7 @@ public class ResumeUtils
     {
         if( value == null )
         {
-            return new BigDecimal( 0 );
+            return BigDecimal.ZERO;
         }
         
         try
@@ -277,7 +293,7 @@ public class ResumeUtils
         }
         catch( Exception err )
         {
-            return new BigDecimal( 0 );
+            return BigDecimal.ZERO;
         }
     }
     
