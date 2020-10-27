@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class ReportGroup implements Cloneable
 {
+    public static final String[] REFERENCE_NONE = new String[2];
+    
     private final String name;
     private final Map<String,ReportGroup> subgroups;
     private final Map<String,ReportValue> values;
@@ -33,7 +35,7 @@ public class ReportGroup implements Cloneable
         return addValue( new ReportValue( name , value , important , lessIsBetter ) );
     }
     
-    public ReportGroup addValue( String name , Object value , boolean important , boolean lessIsBetter , String reference )
+    public ReportGroup addValue( String name , Object value , boolean important , boolean lessIsBetter , String[] reference )
     {
         return addValue( 
             new ReportValue( name , value , important , lessIsBetter )
@@ -41,7 +43,7 @@ public class ReportGroup implements Cloneable
         );
     }
     
-    public ReportGroup addValue( String title , String name , Object value , boolean important , boolean lessIsBetter , String reference )
+    public ReportGroup addValue( String title , String name , Object value , boolean important , boolean lessIsBetter , String[] reference )
     {
         return addValue( 
             new ReportValue( name , value , important , lessIsBetter )

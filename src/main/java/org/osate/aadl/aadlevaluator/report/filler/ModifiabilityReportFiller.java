@@ -9,10 +9,10 @@ import org.osate.aadl.evaluator.project.Component;
 import org.osate.aadl.evaluator.project.Connection;
 import org.osate.aadl.evaluator.project.Subcomponent;
 
-public class Modifiability 
+public class ModifiabilityReportFiller 
 {
     
-    private Modifiability()
+    private ModifiabilityReportFiller()
     {
         // do nothing
     }
@@ -35,14 +35,14 @@ public class Modifiability
         }
         
         ReportGroup subs = subGroup.getSubgroup( "subcomponents" )
-            .addValue( "Subcomponents Added"   , "added"   , 0 , false , false , "" )
-            .addValue( "Subcomponents Changed" , "changed" , 0 , false , false , "" )
-            .addValue( "Subcomponents Deleted" , "deleted" , 0 , false , false , "" );
+            .addValue( "Subcomponents Added"   , "added"   , 0 , false , false , ReportGroup.REFERENCE_NONE )
+            .addValue( "Subcomponents Changed" , "changed" , 0 , false , false , ReportGroup.REFERENCE_NONE )
+            .addValue( "Subcomponents Deleted" , "deleted" , 0 , false , false , ReportGroup.REFERENCE_NONE );
         
         ReportGroup cons = subGroup.getSubgroup( "connections" )
-            .addValue( "Connections Added"   , "added"   , 0 , false , false , "" )
-            .addValue( "Connections Changed" , "changed" , 0 , false , false , "" )
-            .addValue( "Connections Deleted" , "deleted" , 0 , false , false , "" );
+            .addValue( "Connections Added"   , "added"   , 0 , false , false , ReportGroup.REFERENCE_NONE )
+            .addValue( "Connections Changed" , "changed" , 0 , false , false , ReportGroup.REFERENCE_NONE )
+            .addValue( "Connections Deleted" , "deleted" , 0 , false , false , ReportGroup.REFERENCE_NONE );
         
         for( Map.Entry<String,List<String>> entry : diff.entrySet() )
         {
@@ -85,7 +85,7 @@ public class Modifiability
             component.getSubcomponentsAll().size() , 
             true , 
             true , 
-            "" 
+            ReportGroup.REFERENCE_NONE 
         );
         
         return group;
@@ -107,7 +107,7 @@ public class Modifiability
             component.getConnectionsAll().size() , 
             true , 
             true ,
-            ""
+            ReportGroup.REFERENCE_NONE
         );
         
         return group;

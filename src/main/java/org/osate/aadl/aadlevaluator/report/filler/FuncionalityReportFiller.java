@@ -7,13 +7,13 @@ import org.osate.aadl.aadlevaluator.report.ReportGroup;
 import org.osate.aadl.evaluator.project.Component;
 import org.osate.aadl.evaluator.project.Subcomponent;
 
-public class Funcionality 
+public class FuncionalityReportFiller 
 {
     public static final String SOFTWARE_INSIDE = "Integrated Software";
     public static final String SOFTWARE_WRAPPER = "Software Wrapper";
     public static final String HARDWARE_WRAPPER = "Hardware Conversor";
     
-    private Funcionality()
+    private FuncionalityReportFiller()
     {
         // do nothing
     }

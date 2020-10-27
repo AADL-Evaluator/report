@@ -28,8 +28,12 @@ public class ResumeUtils
     
     public static EvolutionReport getResume( ProjectReport project , EvolutionReport resume )
     {
+        LOG.log( Level.INFO , "[RESUME] Resume was started..." );
+        
         for( EvolutionReport report : project.getReports().values() )
         {
+            LOG.log( Level.INFO , "[RESUME] Evolution: {0} " , report.getName() );
+            
             for( String name : report.getGroups().keySet() )
             {
                 ReportGroup g1 = resume.getGroup( name );
@@ -52,6 +56,8 @@ public class ResumeUtils
             ReportGroup group = resume.containsKey( entry.getKey() )
                 ? resume.get( entry.getKey() )
                 : new ReportGroup( entry.getKey() );
+            
+            LOG.log( Level.INFO , "[RESUME] group: {0} " , entry.getKey() );
             
             if( g2 == null || g2.trim().isEmpty() )
             {
@@ -82,9 +88,9 @@ public class ResumeUtils
             
             String title = entry.getValue().getTitle();
             
-            
             if( resume.containsKey( entry.getKey() ) )
             {
+                LOG.log( Level.INFO , "[RESUME]    resume contains: {0} " , title );
                 BigDecimal value = BigDecimal.ZERO;
                 
                 try
@@ -100,9 +106,9 @@ public class ResumeUtils
                 
                 ReportFactor factor = (ReportFactor) resume.get( entry.getKey() ).getValue();
                 
-                factor.setReference( entry.getValue().getReference() == null 
-                    ? "" 
-                    :  entry.getValue().getReference().toString()
+                factor.setReferences( entry.getValue().getReference() == null 
+                    ? null 
+                    : (String[]) entry.getValue().getReference()
                 );
                 
                 if( factor.getMin().compareTo( value ) == 1 )
@@ -117,6 +123,8 @@ public class ResumeUtils
             }
             else if( entry.getValue().getValue() == null )
             {
+                LOG.log( Level.INFO , "[RESUME]    resume not contains: {0} (and value is null)" , title );
+                
                 resume.put( entry.getKey() , new ReportValue(
                     entry.getKey() , 
                     new ReportFactor()
@@ -134,6 +142,9 @@ public class ResumeUtils
             }
             else if( entry.getValue().getValue() instanceof Double )
             {
+                LOG.log( Level.INFO , "[RESUME]    resume not contains: {0} , and value is double: {1}" , 
+                        new Object[]{ title , entry.getValue().getValue() } );
+                
                 resume.put( entry.getKey() , new ReportValue(
                     entry.getKey() , 
                     new ReportFactor()
@@ -151,6 +162,9 @@ public class ResumeUtils
             }
             else if( entry.getValue().getValue() instanceof Integer )
             {
+                LOG.log( Level.INFO , "[RESUME]    resume not contains: {0} , and value is int: {}" , 
+                        new Object[]{ title , entry.getValue().getValue() } );
+                
                 resume.put( entry.getKey() , new ReportValue(
                     entry.getKey() , 
                     new ReportFactor()
@@ -168,6 +182,9 @@ public class ResumeUtils
             }
             else
             {
+                LOG.log( Level.INFO , "[RESUME]    resume not contains: {0} , and value is other: {1}" , 
+                        new Object[]{ title , entry.getValue().getValue() } );
+                
                 String[] parts = UnitUtils.getValueAndUnit( entry.getValue().getValue().toString() );
                 double value = 0;
                 String unit  = parts[ 1 ];
@@ -178,7 +195,7 @@ public class ResumeUtils
                 }
                 catch( Exception err )
                 {
-                    //err.printStackTrace();
+                    // do nothing
                 }
                 
                 resume.put( entry.getKey() , new ReportValue(
@@ -205,6 +222,8 @@ public class ResumeUtils
     
     public static void caculate( ProjectReport project )
     {
+        LOG.log( Level.INFO , "[FACTOR CALCULATE] The factor of all evolutions will be calculated..." );
+        
         for( EvolutionReport report : project.getReports().values() )
         {
             LOG.log(Level.INFO , "evolution name: {0}" , report.getName() );

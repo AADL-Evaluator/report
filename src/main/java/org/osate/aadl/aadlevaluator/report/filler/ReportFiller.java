@@ -17,16 +17,17 @@ public class ReportFiller
     {
         System.out.println( "[REPORT FILLER]" );
         
-        Modifiability.fill( report , component );
-        Funcionality.fill( report , component );
-        Peformance.fill( report , component );
+        ModifiabilityReportFiller.fill( report , component );
+        FuncionalityReportFiller.fill( report , component );
+        PeformanceReportFiller.fill( report , component );
+        PropertyReportFiller.fill( report , component );
         
         return report;
     }
     
     public static EvolutionReport fill( EvolutionReport report , Map<String,List<String>> diff )
     {
-        Modifiability.fill( report , diff );
+        ModifiabilityReportFiller.fill( report , diff );
         
         return report;
     }

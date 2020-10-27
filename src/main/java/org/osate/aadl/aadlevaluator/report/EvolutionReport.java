@@ -16,7 +16,7 @@ public class EvolutionReport implements Cloneable
     public EvolutionReport( final String name ) 
     {
         this.name = name;
-        this.groups = new TreeMap<>();
+        this.groups = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
     }
 
     public Evolution getEvolution()

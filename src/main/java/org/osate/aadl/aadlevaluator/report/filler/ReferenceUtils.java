@@ -1,7 +1,7 @@
 package org.osate.aadl.aadlevaluator.report.filler;
 
+import java.util.Collection;
 import org.osate.aadl.evaluator.project.Component;
-import org.osate.aadl.evaluator.reqspec.SystemRequirement;
 import org.osate.aadl.evaluator.reqspec.SystemRequirements;
 
 public class ReferenceUtils 
@@ -12,20 +12,23 @@ public class ReferenceUtils
         // do nothing
     }
     
-    public static String getMax( Component component , String... names )
+    public static String[] get( Component component , String... names )
     {
-        return get( component , add( names , "max" ) );
+        return get( component , getValName( names ) );
     }
     
-    public static String getMin( Component component , String... names )
+    public static String[] get( Component component , String nameBased )
     {
-        return get( component , add( names , "min" ) );
-    }
-    
-    private static String get( Component component , String... names )
-    {
-        String name = val( names );
-        System.out.println( "[REFERENCE] Looking for " + name + " in " + component.getFullName() );
+        String valMin = nameBased + "Min";
+        String valMax = nameBased + "Max";
+        
+        System.out.println( "[REFERENCE] Looking for " 
+            + valMin 
+            + " and " 
+            + valMax 
+            + " in " 
+            + component.getFullName() 
+        );
         
         if( component.getRequirements().isEmpty() )
         {
@@ -33,26 +36,42 @@ public class ReferenceUtils
             return null;
         }
         
+        String[] result = new String[ 2 ];
+        
         for( SystemRequirements req : component.getRequirements() )
         {
-            System.out.println( "[REFERENCE]      looking in:"
-                + "\n\tname..: " + req.getName()
-                + "\n\ttitle.: " + req.getTitle()
-                + "\n\ttarget: " + req.getDescription() 
-            );
+            System.out.println( "[REFERENCE]      looking in: " + req.getName() );
             
-            if( req.getComputeds().containsKey( name ) )
+            if( req.getComputeds().containsKey( valMin ) )
             {
-                return req.getComputeds().get( name ).getValue();
+                result[0] = req.getComputeds().get( valMin ).getValue();
             }
-            else if( req.getConstants().containsKey( name ) )
+            else if( req.getConstants().containsKey( valMin ) )
             {
-                return req.getConstants().get( name ).getValue();
+                result[0] = req.getConstants().get( valMin ).getValue();
+            }
+            
+            if( req.getComputeds().containsKey( valMax ) )
+            {
+                result[1] = req.getComputeds().get( valMax ).getValue();
+            }
+            else if( req.getConstants().containsKey( valMax ) )
+            {
+                result[1] = req.getConstants().get( valMax ).getValue();
             }
         }
         
-        System.out.println( "[REFERENCE][ERROR] val/computed/constants " + name + " doesn't not exist." );
-        return null;
+        System.out.println( result[0] == null 
+            ? "[REFERENCE][ERROR] val " + valMin + " doesn't not exist." 
+            : "[REFERENCE] val " + valMin + " is " + result[0] 
+        );
+        
+        System.out.println( result[1] == null 
+            ? "[REFERENCE][ERROR] val " + valMax + " doesn't not exist." 
+            : "[REFERENCE] val " + valMax + " is " + result[1] 
+        );
+        
+        return result;
     }
     
     public static String[] add( String[] arr , String newest ) 
@@ -69,7 +88,7 @@ public class ReferenceUtils
         return newarr; 
     } 
     
-    private static String val( String... names )
+    public static String getValName( String... names )
     {
         StringBuilder val = new StringBuilder();
         
@@ -84,10 +103,51 @@ public class ReferenceUtils
         return val.toString();
     }
     
-    private static String upperFirst( String str )
+    public static String getValName( String[] names , String end )
     {
-        return str.substring( 0 , 1 ).toUpperCase() 
-            + str.substring( 1 );
+        StringBuilder val = new StringBuilder();
+        
+        for( String name : names )
+        {
+            val.append( val.length() == 0 
+                ? name.toLowerCase() 
+                : upperFirst( name )
+            );
+        }
+        
+        val.append( upperFirst( end ) );
+        
+        return val.toString();
+    }
+    
+    public static String getValName( Collection<String> names , String end )
+    {
+        StringBuilder val = new StringBuilder();
+        
+        for( String name : names )
+        {
+            val.append( val.length() == 0 
+                ? name.toLowerCase() 
+                : upperFirst( name )
+            );
+        }
+        
+        val.append( upperFirst( end ) );
+        
+        return val.toString();
+    }
+    
+    public static String upperFirst( String str )
+    {
+        if( str == null || str.trim().isEmpty() )
+        {
+            return "";
+        }
+        else
+        {
+            return str.substring( 0 , 1 ).toUpperCase() 
+                + str.substring( 1 );
+        }
     }
     
 }

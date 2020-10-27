@@ -18,7 +18,7 @@ public class ReportFactor implements Cloneable
     private BigDecimal min;
     private BigDecimal max;
     private String unit;
-    private String reference;
+    private Object[] references;
     private BigDecimal weightDefined;
     private boolean lessIsBetter;
     
@@ -144,14 +144,14 @@ public class ReportFactor implements Cloneable
         return this;
     }
 
-    public String getReference()
+    public Object[] getReferences()
     {
-        return reference == null ? "" : reference;
+        return references;
     }
 
-    public ReportFactor setReference( String reference )
+    public ReportFactor setReferences( Object[] references )
     {
-        this.reference = reference;
+        this.references = references;
         return this;
     }
     
@@ -159,14 +159,37 @@ public class ReportFactor implements Cloneable
     // -------- //
     // -------- //
     
+    public String getReferencesToString()
+    {
+        if( references == null ) return "";
+        else if( references[0] == null && references[1] == null ) return "";
+        else if( references[0] == null ) return "x <= " + references[1];
+        else if( references[1] == null ) return references[ 0 ] + " <= x";
+        else return references[ 0 ] + " <= x <= " + references[ 1 ];
+    }
+    
+    public String getMinAndMaxToString()
+    {
+        if( getMin().compareTo( getMax() ) == 0 )
+            {
+                return getMinUnit();
+            }
+            else
+            {
+                return "[ " + getMinUnit() 
+                    + " , " 
+                    + getMaxUnit() + " ]";
+            }
+    }
+    
     public String getMinUnit()
     {
-        return min + " " + unit;
+        return min.setScale( 5 , RoundingMode.HALF_UP ) + " " + unit;
     }
     
     public String getMaxUnit()
     {
-        return max + " " + unit;
+        return max.setScale( 5 , RoundingMode.HALF_UP ) + " " + unit;
     }
     
     public BigDecimal getWeightCalculated()

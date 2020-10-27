@@ -1,5 +1,7 @@
 package org.osate.aadl.aadlevaluator.report;
 
+import java.util.Arrays;
+
 public class ReportValue<T> implements Cloneable
 {
     private boolean important;
@@ -7,7 +9,7 @@ public class ReportValue<T> implements Cloneable
     private String name;
     private String title;
     private T value;
-    private T reference;
+    private T[] reference;
 
     public ReportValue( String name , T value )
     {
@@ -81,12 +83,22 @@ public class ReportValue<T> implements Cloneable
         return this;
     }
 
-    public T getReference()
+    public T[] getReference()
     {
         return reference;
     }
 
-    public ReportValue<T> setReference( T reference )
+    public T getReferenceMin()
+    {
+        return reference == null ? null : reference[0];
+    }
+
+    public T getReferenceMax()
+    {
+        return reference == null ? null : reference[1];
+    }
+
+    public ReportValue<T> setReference( T[] reference )
     {
         this.reference = reference;
         return this;
@@ -132,7 +144,20 @@ public class ReportValue<T> implements Cloneable
         builder.append( important );
         
         builder.append( ", reference: " );
-        builder.append( reference );
+        
+        if( reference == null )
+        {
+            builder.append( "is null" );
+        }
+        else
+        {
+            builder.append( "{ min: " );
+            builder.append( reference[0] );
+            builder.append( ", max: " );
+            builder.append( reference[1] );
+            builder.append( " }" );
+        }
+        
         builder.append( "\n" );
         
         return builder.toString();

@@ -10,9 +10,9 @@ import org.osate.aadl.evaluator.project.Component;
 import org.osate.aadl.evaluator.project.Subcomponent;
 import org.osate.aadl.evaluator.unit.UnitUtils;
 
-public class Peformance 
+public class PeformanceReportFiller 
 {
-    private Peformance()
+    private PeformanceReportFiller()
     {
         // do nothing
     }
@@ -47,7 +47,7 @@ public class Peformance
             result.getTotal() , 
             true , 
             true ,
-            ReferenceUtils.getMax( component , "weight" )
+            ReferenceUtils.get( component , "weight" )
         );
         
         return group;
@@ -72,7 +72,7 @@ public class Peformance
             result.getTotal() , 
             true , 
             true ,
-            ReferenceUtils.getMax( component , "price" )
+            ReferenceUtils.get( component , "price" )
         );
         
         return group;
@@ -111,14 +111,19 @@ public class Peformance
                 busGroup.addSubgroup( subGroup );
             }
             
-            busGroup.addValue( busName  + " Connections" , "connections_number" , result.getResults().size() , false , false , "" );
-            busGroup.addValue( busName  + " Usage Min" , "total_usage_min" , total.getMin() , true , true , result.getBandwidth() );
-            busGroup.addValue( busName  + " Usage Max" , "total_usage_max" , total.getMax() , true , true , result.getBandwidth() );
+            String[] busReference = new String[]{
+                null ,
+                result.getBandwidth()
+            };
+            
+            busGroup.addValue( busName  + " Connections" , "connections_number" , result.getResults().size() , false , false , ReportGroup.REFERENCE_NONE );
+            busGroup.addValue( busName  + " Usage Min" , "total_usage_min" , total.getMin() , true , true , busReference );
+            busGroup.addValue( busName  + " Usage Max" , "total_usage_max" , total.getMax() , true , true , busReference );
             
             if( !UnitUtils.isEmpty( result.getBandwidth() ) )
             {
                 double bandwidth = UnitUtils.getValue( result.getBandwidth() );
-                String reference = ReferenceUtils.getMax( component , busName , "latency" );
+                String[] reference = ReferenceUtils.get( component , busName , "latency" );
                 
                 busGroup.addValue( 
                     busName  + " Latency Min" ,
@@ -166,8 +171,8 @@ public class Peformance
                 cpuGroup.addValue( sub.getElement().toString() + "_max" , sub.getValueMaxStr() , false , false );
             }
             
-            String reference = ReferenceUtils.getMax( component , cpuName , "usage" );
-            cpuGroup.addValue( cpuName  + " Connections" , "connections_number" , result.getResults().size() , false , false , "" );
+            String[] reference = ReferenceUtils.get( component , cpuName , "usage" );
+            cpuGroup.addValue( cpuName  + " Connections" , "connections_number" , result.getResults().size() , false , false , ReportGroup.REFERENCE_NONE );
             cpuGroup.addValue( cpuName  + " Usage Min" , "usage_min" , result.getValueMinStr() , true , true , reference );
             cpuGroup.addValue( cpuName  + " Usage Max" , "usage_max" , result.getValueMaxStr() , true , true , reference );
             
