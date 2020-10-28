@@ -46,9 +46,29 @@ public class FuncionalityReportFiller
         
         ReportGroup group = report.getGroup( "functionality" );
         
-        group.addValue( SOFTWARE_INSIDE  , counter.get( SOFTWARE_INSIDE  ) , true , false );
-        group.addValue( SOFTWARE_WRAPPER , counter.get( SOFTWARE_WRAPPER ) , true , true );
-        group.addValue( HARDWARE_WRAPPER , counter.get( HARDWARE_WRAPPER ) , true , true );
+        group.addValue( 
+            SOFTWARE_INSIDE  , 
+            counter.get( SOFTWARE_INSIDE  ) , 
+            true , 
+            false ,
+            ReferenceUtils.get( component , "integratedSoftware" )
+        );
+        
+        group.addValue( 
+            SOFTWARE_WRAPPER , 
+            counter.get( SOFTWARE_WRAPPER ) , 
+            true , 
+            true ,
+            ReferenceUtils.get( component , "softwareWrapper" )
+        );
+        
+        group.addValue( 
+            HARDWARE_WRAPPER , 
+            counter.get( HARDWARE_WRAPPER ) , 
+            true , 
+            true ,
+            ReferenceUtils.get( component , "hardwareConversor" )
+        );
     }
     
     private static Map<String,Integer> add( Map<String,Integer> counter , String key )

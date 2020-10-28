@@ -85,7 +85,7 @@ public class ModifiabilityReportFiller
             component.getSubcomponentsAll().size() , 
             true , 
             true , 
-            ReportGroup.REFERENCE_NONE 
+            ReferenceUtils.get( component , "subcomponents" )
         );
         
         return group;
@@ -107,7 +107,7 @@ public class ModifiabilityReportFiller
             component.getConnectionsAll().size() , 
             true , 
             true ,
-            ReportGroup.REFERENCE_NONE
+            ReferenceUtils.get( component , "connections" )
         );
         
         return group;
