@@ -16,7 +16,7 @@ import org.osate.aadl.aadlevaluator.report.ProjectReport;
  * 
  * @author avld
  */
-public class ReportHtml 
+public class ReportTableHtml 
 {
     private static final String HTML = "<!DOCTYPE html>\n"
         + "<html>\n"
@@ -46,14 +46,14 @@ public class ReportHtml
     public static final String ARRAY_END = "]";
     public static final String ITEM_SEPARATOR = ",";
     
-    private ReportHtml()
+    private ReportTableHtml()
     {
         // faz nada
     }
     
     public static File create( File dir , ProjectReport projectReport ) throws Exception
     {
-        File file = new File( dir , "report.html" );
+        File file = new File( dir , "table_report.html" );
         
         try ( FileWriter writer = new FileWriter( file ) )
         {

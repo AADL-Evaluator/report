@@ -9,7 +9,7 @@ public class FactorComparator implements Comparator<EvolutionReport>
     @Override
     public int compare( EvolutionReport o1 , EvolutionReport o2 )
     {
-        return o1.getFactor().compareTo( o2.getFactor() );
+        return o1.getFactor( "total" ).compareTo( o2.getFactor( "total" ) );
     }
     
 }

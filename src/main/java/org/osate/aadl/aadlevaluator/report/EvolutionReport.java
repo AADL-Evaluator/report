@@ -7,15 +7,17 @@ import org.osate.aadl.evaluator.evolution.Evolution;
 
 public class EvolutionReport implements Cloneable
 {
-    private BigDecimal factor;
+    private int ranking;
     private Evolution evolution;
     
     private final String name;
     private final Map<String,ReportGroup> groups;
+    private final Map<String,BigDecimal> factor;
     
     public EvolutionReport( final String name ) 
     {
         this.name = name;
+        this.factor = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
         this.groups = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
     }
 
@@ -30,13 +32,32 @@ public class EvolutionReport implements Cloneable
         return this;
     }
 
-    public EvolutionReport setFactor( BigDecimal factor )
+    public int getRanking()
     {
-        this.factor = factor;
+        return ranking;
+    }
+
+    public void setRanking( int ranking )
+    {
+        this.ranking = ranking;
+    }
+
+    public EvolutionReport setFactor( Map<String,BigDecimal> factor )
+    {
+        this.factor.clear();
+        this.factor.putAll( factor );
+        
         return this;
     }
 
-    public BigDecimal getFactor()
+    public BigDecimal getFactor( String name )
+    {
+        return factor.containsKey( name ) 
+            ? factor.get( name )
+            : BigDecimal.ZERO;
+    }
+
+    public Map<String,BigDecimal> getFactor()
     {
         return factor;
     }

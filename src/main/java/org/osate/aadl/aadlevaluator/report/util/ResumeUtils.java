@@ -2,7 +2,10 @@ package org.osate.aadl.aadlevaluator.report.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.osate.aadl.aadlevaluator.report.EvolutionReport;
@@ -220,14 +223,34 @@ public class ResumeUtils
     // ---------------------------- CALCULATE
     // ----------------------------
     
+    public static void setRanking( ProjectReport project )
+    {
+        LinkedList<EvolutionReport> reports = new LinkedList<>( 
+            project.getReports().values() 
+        );
+        
+        // ordernar
+        Collections.sort( reports , new FactorComparator() );
+        
+        // atribuir o valor (com menor valor, ultima posição)
+        for( int i = 0 ; i < reports.size() ; i++ )
+        {
+            reports.get( i ).setRanking( reports.size() - i );
+        }
+    }
+    
     public static void caculate( ProjectReport project )
     {
         LOG.log( Level.INFO , "[FACTOR CALCULATE] The factor of all evolutions will be calculated..." );
+        
+        int counter = 1;
         
         for( EvolutionReport report : project.getReports().values() )
         {
             LOG.log(Level.INFO , "evolution name: {0}" , report.getName() );
             BigDecimal total = BigDecimal.ZERO;
+            
+            Map<String,BigDecimal> factor = new TreeMap<>();
             
             for( String name : project.getResume().getGroups().keySet() )
             {
@@ -236,6 +259,7 @@ public class ResumeUtils
                     report.getGroups().get( name )
                 );
                 
+                factor.put( name , value );     // to register
                 total = total.add( value );
                 
                 LOG.log(Level.INFO , "{0} = {1}" , new Object[]{ 
@@ -249,8 +273,13 @@ public class ResumeUtils
                 "total = {0}" , 
                 total.setScale( 20 , RoundingMode.HALF_UP ).doubleValue() 
             );
-            report.setFactor( total );
+            
+            factor.put( "total" , total );
+            report.setFactor( factor );
+            report.setRanking( counter++ );
         }
+        
+        setRanking( project );
     }
     
     private static BigDecimal caculate( ReportGroup resume , ReportGroup group )

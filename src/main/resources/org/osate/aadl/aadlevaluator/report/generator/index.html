@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <meta charset='UTF-8'>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Chart Report</title>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue-good-table@2.21.1/dist/vue-good-table.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue-tables-2@2.1.46/dist/vue-tables-2.min.js"></script>
+        
+        <!-- from: https://github.com/rohanpujaris/stickythead -->
+        <script src="https://unpkg.com/stickythead"></script>
+        
+        <script src='https://code.jquery.com/jquery-3.5.1.js'></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js"></script>
+
+        <style>
+            html {
+                overflow-x : scroll;
+            }
+        </style>
+    </header>
+    <body>
+
+        <div id="app" class="">
+            <app_nav_menu @select="select"></app_nav_menu>
+
+            <div class="p-5">
+                <filter_list 
+                    v-if="center === 'filter'"
+                    :filters="filters" 
+                    :total="reports.length" 
+                    :subtotal="matched.length"
+                    @refresh="refresh"
+                >
+                </filter_list>
+
+                <table_list
+                    v-if="center === 'table'"
+                    :reports="matched">
+                </table_list>
+
+                <chart_list
+                    v-if="center === 'chart'"
+                    :reports="matched">
+                </chart_list>
+            </div>
+        </div>
+
+        <script src="data.js"></script>
+        <script src="menu.js"></script>
+        <script src="nav.js"></script>
+        <script src="table_list.js"></script>
+        <script src="filter_list.js"></script>
+        <script src="filter_dialog.js"></script>
+
+        <script src="chart_list.js"></script>
+        <script src="chart_scatter.js"></script>
+        <script src="chart_radar.js"></script>
+        <script src="chart_bar.js"></script>
+        
+        <script>
+            // require by https://matanya.gitbook.io/vue-tables-2/installation
+            Vue.use( VueTables.ClientTable );
+
+            new Vue({
+                el: '#app' , 
+
+                data : {
+                    filters : [] ,
+                    reports : reports ,
+                    matched : [] ,
+                    center  : "filter"
+                } ,
+
+                methods: {
+                    select : function ( name ){
+                        this.center = name;
+                    } ,
+
+                    refresh: function ( filters ){
+                        setTimeout( () => {
+                            this.matched = getReportsByFilters( filters );
+                        } , 100 );
+                    }
+                } ,
+
+                mounted : function (){
+                    this.matched = this.reports;
+                }
+            });
+        </script>
+    </body>
+</html>

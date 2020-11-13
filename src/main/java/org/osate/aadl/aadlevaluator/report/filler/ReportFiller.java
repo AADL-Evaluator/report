@@ -19,8 +19,8 @@ public class ReportFiller
         
         ModifiabilityReportFiller.fill( report , component );
         FuncionalityReportFiller.fill( report , component );
-        PeformanceReportFiller.fill( report , component );
         PropertyReportFiller.fill( report , component );
+        PeformanceReportFiller.fill( report , component );
         
         return report;
     }

@@ -1,6 +1,7 @@
 package org.osate.aadl.aadlevaluator.report;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
+import org.osate.aadl.evaluator.unit.UnitUtils;
 
 public class ReportValue<T> implements Cloneable
 {
@@ -75,6 +76,46 @@ public class ReportValue<T> implements Cloneable
     public T getValue()
     {
         return value;
+    }
+
+    public double getValueNumber()
+    {
+        if( value instanceof String )
+        {
+            String number = UnitUtils.getValueAndUnit( (String) value )[0];
+            
+            return number == null || number.trim().isEmpty() 
+                ? 0 
+                : Double.parseDouble( number );
+        }
+        else if( value instanceof Double )
+        {
+            return (Double) value;
+        }
+        else if( value instanceof Integer )
+        {
+            return (Integer) value;
+        }
+        else if( value instanceof BigDecimal )
+        {
+            return ((BigDecimal) value).doubleValue();
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public String getValueUnit()
+    {
+        if( value instanceof String )
+        {
+            return UnitUtils.getValueAndUnit( (String) value )[1];
+        }
+        else
+        {
+            return "";
+        }
     }
 
     public ReportValue<T> setValue( T value )

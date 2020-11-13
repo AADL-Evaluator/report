@@ -6,7 +6,8 @@ import org.osate.aadl.aadlevaluator.report.EvolutionReport;
 import org.osate.aadl.aadlevaluator.report.ProjectReport;
 import org.osate.aadl.aadlevaluator.report.filler.ReportFiller;
 import org.osate.aadl.aadlevaluator.report.generator.ReportCSV;
-import org.osate.aadl.aadlevaluator.report.generator.ReportHtml;
+import org.osate.aadl.aadlevaluator.report.generator.ReportChartHtml;
+import org.osate.aadl.aadlevaluator.report.generator.ReportTableHtml;
 import org.osate.aadl.aadlevaluator.report.generator.ReportJSON;
 import org.osate.aadl.aadlevaluator.report.generator.ReportYAML;
 import org.osate.aadl.evaluator.evolution.Evolution;
@@ -50,7 +51,8 @@ public class ProjectReportUtils
         ReportCSV .create( dir , report );
         ReportJSON.create( dir , report );
         ReportYAML.create( dir , report );
-        ReportHtml.create( dir , report );
+        ReportTableHtml.create( dir , report );
+        ReportChartHtml.create( dir , report );
         
         return dir;
     }
