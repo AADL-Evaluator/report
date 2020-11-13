@@ -51,7 +51,7 @@ public class ProjectReportUtils
         ReportCSV .create( dir , report );
         ReportJSON.create( dir , report );
         ReportYAML.create( dir , report );
-        ReportTableHtml.create( dir , report );
+        //ReportTableHtml.create( dir , report );
         ReportChartHtml.create( dir , report );
         
         return dir;

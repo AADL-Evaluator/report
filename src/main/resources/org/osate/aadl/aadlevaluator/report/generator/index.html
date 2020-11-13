@@ -34,7 +34,7 @@
                 <filter_list 
                     v-if="center === 'filter'"
                     :filters="filters" 
-                    :total="reports.length" 
+                    :reports="reports" 
                     :subtotal="matched.length"
                     @refresh="refresh"
                 >
@@ -52,17 +52,17 @@
             </div>
         </div>
 
-        <script src="data.js"></script>
-        <script src="menu.js"></script>
-        <script src="nav.js"></script>
-        <script src="table_list.js"></script>
-        <script src="filter_list.js"></script>
-        <script src="filter_dialog.js"></script>
+        <script src="chart_report/data.js"></script>
+        <script src="chart_report/menu.js"></script>
+        <script src="chart_report/nav.js"></script>
+        <script src="chart_report/table_list.js"></script>
+        <script src="chart_report/filter_list.js"></script>
+        <script src="chart_report/filter_dialog.js"></script>
 
-        <script src="chart_list.js"></script>
-        <script src="chart_scatter.js"></script>
-        <script src="chart_radar.js"></script>
-        <script src="chart_bar.js"></script>
+        <script src="chart_report/chart_list.js"></script>
+        <script src="chart_report/chart_scatter.js"></script>
+        <script src="chart_report/chart_radar.js"></script>
+        <script src="chart_report/chart_bar.js"></script>
         
         <script>
             // require by https://matanya.gitbook.io/vue-tables-2/installation

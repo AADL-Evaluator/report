@@ -30,7 +30,8 @@ function getItems(){
             valueMin : resume[ i ].valueMin ,
             valueMax : resume[ i ].valueMax ,
             limitMin : resume[ i ].limitMin ,
-            limitMax : resume[ i ].limitMax
+            limitMax : resume[ i ].limitMax ,
+            lessIsBetter : resume[ i ].lessIsBetter ,
         } );
 
         if( i === 'functionality' 
@@ -51,7 +52,8 @@ function getItems(){
                     valueMin : resume[ i ][ i2 ].valueMin ,
                     valueMax : resume[ i ][ i2 ].valueMax ,
                     limitMin : resume[ i ][ i2 ].limitMin ,
-                    limitMax : resume[ i ][ i2 ].limitMax
+                    limitMax : resume[ i ][ i2 ].limitMax ,
+                    lessIsBetter : resume[ i ][ i2 ].lessIsBetter
                 } );
             }
         }
@@ -89,7 +91,8 @@ function getItemsGroup( isToIncludeAllInLimit ){
                 valueMin : resume[ i ].valueMin ,
                 valueMax : resume[ i ].valueMax ,
                 limitMin : resume[ i ].limitMin ,
-                limitMax : resume[ i ].limitMax
+                limitMax : resume[ i ].limitMax ,
+                lessIsBetter : resume[ i ].lessIsBetter
             } );
         }
         else if( i === 'functionality' 
@@ -115,7 +118,8 @@ function getItemsGroup( isToIncludeAllInLimit ){
                     valueMin : resume[ i ][ i2 ].valueMin ,
                     valueMax : resume[ i ][ i2 ].valueMax ,
                     limitMin : resume[ i ][ i2 ].limitMin ,
-                    limitMax : resume[ i ][ i2 ].limitMax
+                    limitMax : resume[ i ][ i2 ].limitMax ,
+                    lessIsBetter : resume[ i ][ i2 ].lessIsBetter ,
                 } );
             }
         }
@@ -231,6 +235,59 @@ function isAllInLimit( report )
     }
 
     return true;
+}
+
+/**
+ * check the value is in limit
+ * 
+ * @param {object|string} resume    object resume or attribute name
+ * @param {number} value            report value
+ */
+function isInLimit( resume , value )
+{
+    let l = isSet( resume.limitMin ) 
+        ? resume 
+        : getResume( attribute );
+
+    return l.limitMin <= value 
+        && value <= l.limitMax;
+}
+
+function howIsTheBest( reportsSelected , attribute )
+{
+    let l = getResume( attribute );
+
+    if( !isSet( l.lessIsBetter ) )
+    {
+        l.lessIsBetter = true;
+    }
+
+    let actualValue = l.lessIsBetter 
+        ? Number.POSITIVE_INFINITY 
+        : Number.NEGATIVE_INFINITY;
+
+    let best = [];
+    
+    reportsSelected.forEach( report => {
+        let reportValue = getReport( report , attribute );
+
+        // -------- it should be respect the limits
+        if( reportValue < l.limitMin || reportValue > l.limitMax ){
+            return ;
+        }
+        // -------- it is the best result, clear and put it
+        else if( ( l.lessIsBetter && reportValue < actualValue ) 
+            || !l.lessIsBetter && reportValue > actualValue ){
+            best = [ report.name ];
+            actualValue = reportValue;
+        }
+        // -------- it is the best result, clear and put it
+        else if( reportValue === actualValue ){
+            best.push( report.name );
+        }
+    });
+    
+    return best;
 }
 
 

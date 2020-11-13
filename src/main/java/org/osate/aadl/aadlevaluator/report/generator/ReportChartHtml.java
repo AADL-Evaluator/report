@@ -52,7 +52,8 @@ public class ReportChartHtml
         + "valueMax : {VALUE_MAX} , "
         + "limitMin : {LIMIT_MIN} , "
         + "limitMax : {LIMIT_MAX} , "
-        + "unit : '{UNIT}' "
+        + "unit : '{UNIT}', "
+        + "lessIsBetter : {LESS_IS_BETTER}, "
         + "}";
     
     private static final String REPORT = "{ \n"
@@ -104,7 +105,9 @@ public class ReportChartHtml
         // copy auxiliar files
         for( String filename : AUX_FILES )
         {
-            File file = new File( chartDir , filename );
+            File file = filename.equalsIgnoreCase( "index.html" )
+                ? new File( dir      , filename )
+                : new File( chartDir , filename );
         
             try ( FileWriter writer = new FileWriter( file ) )
             {
@@ -161,6 +164,7 @@ public class ReportChartHtml
             .replace( "{VALUE_MIN}"  , "1"    ) 
             .replace( "{VALUE_MAX}"  , project.getReports().size() + "" ) 
             .replace( "{UNIT}"       , "" ) 
+            .replace( "{LESS_IS_BETTER}" , "true" ) 
         ).append( ARRAY_SEPARATOR )
         .append( System.lineSeparator() );
         
@@ -171,6 +175,7 @@ public class ReportChartHtml
             .replace( "{VALUE_MIN}"  , "0" ) 
             .replace( "{VALUE_MAX}"  , "1" ) 
             .replace( "{UNIT}"       , ""  ) 
+            .replace( "{LESS_IS_BETTER}" , "false" ) 
         ).append( ARRAY_SEPARATOR )
         .append( System.lineSeparator() );
         
@@ -183,7 +188,8 @@ public class ReportChartHtml
                 .replace( "{LIMIT_MAX}"  , "1" ) 
                 .replace( "{VALUE_MIN}"  , "0" ) 
                 .replace( "{VALUE_MAX}"  , "1" ) 
-                .replace( "{UNIT}" , "" ) 
+                .replace( "{UNIT}"       , "" ) 
+                .replace( "{LESS_IS_BETTER}" , "false" )
             ).append( ARRAY_SEPARATOR );
             
             builder.append( group.getName() );
@@ -228,9 +234,10 @@ public class ReportChartHtml
                 .replace( "{NAME}" , factor.getTitle() ) 
                 .replace( "{LIMIT_MIN}"  , min ) 
                 .replace( "{LIMIT_MAX}"  , max ) 
-                .replace( "{VALUE_MIN}"  , factor.getMax().toString() ) 
-                .replace( "{VALUE_MAX}"  , factor.getMin().toString() ) 
-                .replace( "{UNIT}" , factor.getUnit() ) 
+                .replace( "{VALUE_MIN}"  , factor.getMin().toString() ) 
+                .replace( "{VALUE_MAX}"  , factor.getMax().toString() ) 
+                .replace( "{UNIT}"       , factor.getUnit() ) 
+                .replace( "{LESS_IS_BETTER}" , factor.isLessIsBetter() + "" )
             )
                 .append( ARRAY_SEPARATOR );
         }

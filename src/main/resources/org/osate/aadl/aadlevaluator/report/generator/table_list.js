@@ -2,17 +2,20 @@ Vue.component( 'table_list' , {
     template : `
     <div>
         <div class="columns">
-            <div class="column is-four-fifths">
+            <div class="column">
                 <h3 class="title is-3">Reports ({{ reports.length }})</h3>
             </div>
 
             <div class="column">
+                <button class='button' @click="export2csv">Export to CSV</button>
+                <button class='button' @click="export2xls">Export to XLS</button>
             </div>
         </div>
 
         <table_01 v-if="show" 
-            :columns="getColumns()" 
-            :rows="getRows()"
+            :columns="columns" 
+            :rows="rows"
+            :best="getBest()"
             @selected="selected = $event"
         ></table_01>
         <div v-else>Loading...</div>
@@ -33,11 +36,34 @@ Vue.component( 'table_list' , {
             groups : getItemsGroup( false ) ,
             charts : [ "chart_" + Math.random() ] ,
             show : false ,
-            selected : null
+            selected : null ,
+            columns : [] ,
+            rows : [] ,
         };
     } ,
 
     methods : {
+        getBest : function (){
+            let groups = getItemsGroup( false );
+            let best = {};
+
+            for( groupName in groups )
+            {
+                if( !groups.hasOwnProperty( groupName ) ){
+                    continue ;
+                }
+
+                groups[ groupName ].forEach( ( item ) => {
+                    best[ item.value ] = howIsTheBest( 
+                        this.reports , 
+                        item.value 
+                    );
+                } );
+            }
+
+            return best;
+        } ,
+
         getReport : function( report , name ){
             return getReport( report , name );
         } ,
@@ -100,10 +126,93 @@ Vue.component( 'table_list' , {
             } );
 
             return rows;
+        } ,
+
+        // --------------------------------- 
+        // --------------------------------- EXPORTS
+        // --------------------------------- 
+
+        export2csv : function () {
+            const tableData = [ 
+                [] 
+            ];
+            
+            this.columns.forEach( column => {
+                tableData[0].push( column.label );
+            } );
+
+            this.rows.forEach( r1 => {
+                tableData.push( r1.label );
+
+                r1.children.forEach( r2 => {
+                    let data = [];
+
+                    for( r3 in r2 ){
+                        if( r2.hasOwnProperty( r3 ) ){
+                            data.push( r2[ r3 ] );
+                        }
+                    }
+
+                    tableData.push( data );
+                });
+            });
+            
+            this.export( 
+                URL.createObjectURL( 
+                    new Blob([ tableData.join( "\n" ) ] , 
+                    { type: 'text/csv' }) 
+                ) , 
+                'report.csv' 
+            );
+        } ,
+
+        // from: https://stackoverflow.com/questions/22317951/export-html-table-data-to-excel-using-javascript-jquery-is-not-working-properl
+        export2xls : function (){
+            let data = "<table><tr>";
+            
+            this.columns.forEach( column => {
+                data += `<td>${column.label}</td>`;
+            } );
+
+            this.rows.forEach( r1 => {
+                r1.children.forEach( r2 => {
+                    data += "<tr>";
+
+                    for( r3 in r2 ){
+                        if( r2.hasOwnProperty( r3 ) ){
+                            data += isSet( r2[ r3 ] ) 
+                                ? `<td>${r2[ r3 ]}</td>`
+                                : `<td></td>`;
+                        }
+                    }
+
+                    data += "</tr>";
+                });
+            });
+
+            data += "</table>";
+
+            this.export( 
+                'data:application/vnd.ms-excel,' + escape( data ) , 
+                'report.xls' 
+            );
+        } ,
+
+        export : function ( href , name ){
+            const a = document.createElement( "a" );
+            a.setAttribute( "href"     , href );
+            a.setAttribute( "download" , name );
+
+            document.body.appendChild( a );
+            a.click();
+            document.body.removeChild( a );
         }
     } ,
 
     mounted : function (){
+        this.columns = this.getColumns();
+        this.rows = this.getRows();
+
         setTimeout( () => this.show = true , 100 );
     }
 });
@@ -112,7 +221,7 @@ Vue.component( 'table_list' , {
 
 Vue.component( 'table_01' , {
     template : `
-    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+    <table id="report_table" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
         <thead>
             <tr class="header_move">
                 <th v-for="(column,index) in columns" 
@@ -140,15 +249,39 @@ Vue.component( 'table_01' , {
                     :key="i2"
                     :style="getRowStyle( i2 )"
                     :title="child.attribute"
+                    :class="getRowClass( i2 , row , group.items[ i1 ] )"
                 >{{ getValue( row , group.items[ i1 ] ) }}</td>
             </tr>
         </tbody>
     </table>
     ` ,
 
-    props : [ "columns" , "rows" ] ,
+    props : [ "columns" , "rows" , "best" ] ,
+
+    data : function (){
+        return {
+            // do nothing
+        };
+    } ,
 
     methods : {
+
+        isTheBest : function ( reportName , attribute ){
+            return this.best[ attribute ].includes( reportName );
+        } ,
+
+        isInLimit : function ( value , resume ){
+            if( typeof value === 'string' ) return true;
+            return isInLimit( resume , value );
+        } ,
+
+        getRowClass : function ( reportName , value , resume ){
+            return {
+                'has-text-success' : this.isTheBest( reportName , resume.value ) ,
+                'has-text-danger'  : !this.isInLimit( value , resume ) 
+            };
+        } ,
+
         getRowStyle : function ( index ){
             return index == 'attribute'
                 ? "text-indent: 2em;"
@@ -198,7 +331,7 @@ Vue.component( 'bar_modal' , {
     template : `
     <div class="modal is-active">
         <div class="modal-background"></div>
-        <div class="modal-content" style="background: white">
+        <div class="modal-content" style="background: white; width: 80vw">
             <chart_bar :reports="reports" :attribute="attribute" />
         </div>
         <button class="modal-close is-large" aria-label="close" @click="$emit('closed')"></button>

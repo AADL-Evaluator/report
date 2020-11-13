@@ -3,7 +3,7 @@ Vue.component( 'app_nav_menu' , {
 <nav class="navbar is-black" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="#">
-            <img src="https://www.pngfind.com/pngs/b/468-4686554_performance-icon-png.png" width="28" height="28">
+            <img src="report.png" width="28" height="28">
         </a>
     
         <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
