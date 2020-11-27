@@ -95,10 +95,45 @@ public class ModifiabilityReportFiller
     {
         ReportGroup group = new ReportGroup( "connections" );
         
-        for( Connection connection : component.getConnectionsAll().values() )
+        for( Map.Entry<String,Connection> entry : component.getConnectionsAll().entrySet() )
         {
-            add( group , connection.getComponentA().getType() );
-            add( group , connection.getComponentB().getType() );
+            Connection connection = entry.getValue();
+            
+            if( connection == null )
+            {
+                System.err.printf( 
+                    "[ERROR] The connection %s is null.\n" ,
+                    entry.getKey()
+                );
+                
+                continue ;
+            }
+            
+            if( connection.getComponentA() == null )
+            {
+                System.err.printf( 
+                    "[ERROR] The %s (side A of the connection %s) is null.\n" ,
+                    connection.getSubcomponentAndFeatureA() ,
+                    entry.getKey()
+                );
+            }
+            else
+            {
+                add( group , connection.getComponentA().getType() );
+            }
+            
+            if( connection.getComponentB() == null )
+            {
+                System.err.printf( 
+                    "[ERROR] The %s (side B of the connection %s) is null.\n" ,
+                    connection.getSubcomponentAndFeatureB() ,
+                    entry.getKey()
+                );
+            }
+            else
+            {
+                add( group , connection.getComponentB().getType() );
+            }
         }
         
         group.addValue( 
